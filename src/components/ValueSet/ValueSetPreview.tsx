@@ -81,6 +81,7 @@ export function ValueSetPreview({ valueset, trigger }: ValueSetPreviewProps) {
           }}
           onSearch={(term) => {
             setSearch(term);
+            setSelected(null);
           }}
           placeholder={t("search_concept")}
           noOptionsMessage={
