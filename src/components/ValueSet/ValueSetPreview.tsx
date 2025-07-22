@@ -46,14 +46,36 @@ export function ValueSetPreview({ valueset, trigger }: ValueSetPreviewProps) {
     enabled: open,
   });
 
-  const searchResults = searchQuery?.results;
+  const searchResults = valueset.compose.include;
 
   const detailsToShow = useMemo(() => {
     if (selected) {
-      return searchResults?.filter((result) => result.code === selected);
+      return (
+        searchResults?.flatMap(
+          (include) =>
+            include.concept
+              ?.filter((concept) => concept.code === selected)
+              .map((concept) => ({
+                ...concept,
+                system: include.system,
+              })) || [],
+        ) || []
+      );
     }
-    return searchResults;
+    return (
+      searchResults?.flatMap(
+        (include) =>
+          include.concept?.map((concept) => ({
+            ...concept,
+            system: include.system,
+          })) || [],
+      ) || []
+    );
   }, [searchResults, selected]);
+
+  console.log("detailsToShow", detailsToShow);
+  console.log("selected", selected);
+  console.log("search", search);
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -67,7 +89,6 @@ export function ValueSetPreview({ valueset, trigger }: ValueSetPreviewProps) {
             {t("valueset_preview_description")}
           </p>
         </SheetHeader>
-
         <Autocomplete
           options={mergeAutocompleteOptions(
             searchQuery?.results?.map((option) => ({
@@ -79,9 +100,8 @@ export function ValueSetPreview({ valueset, trigger }: ValueSetPreviewProps) {
           onChange={(val) => {
             setSelected(val);
           }}
-          onSearch={(term) => {
+          onSearch={(term: string) => {
             setSearch(term);
-            setSelected(null);
           }}
           placeholder={t("search_concept")}
           noOptionsMessage={
