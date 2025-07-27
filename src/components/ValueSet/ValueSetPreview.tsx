@@ -47,12 +47,15 @@ export function ValueSetPreview({ valueset, trigger }: ValueSetPreviewProps) {
   });
 
   const rawResults = searchQuery?.results || [];
+  const defaultConcepts =
+    valueset.compose?.include?.flatMap((include) => include.concept || []) ??
+    [];
 
   const detailsToShow = selected
     ? rawResults.filter((o) => o.code === selected)
     : rawResults.length
       ? rawResults
-      : valueset.compose?.include?.[0]?.concept || [];
+      : defaultConcepts;
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -74,8 +77,12 @@ export function ValueSetPreview({ valueset, trigger }: ValueSetPreviewProps) {
             })) ?? [],
           )}
           value={selected}
+          freeInput={true}
           onChange={setSelected}
-          onSearch={setSearch}
+          onSearch={(val) => {
+            setSearch(val);
+            setSelected("");
+          }}
           placeholder={t("search_concept")}
           noOptionsMessage={
             searchQuery && !isFetching ? t("no_results_found") : t("searching")
