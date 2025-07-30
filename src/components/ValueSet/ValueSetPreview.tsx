@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import Autocomplete from "@/components/ui/autocomplete";
@@ -46,16 +46,40 @@ export function ValueSetPreview({ valueset, trigger }: ValueSetPreviewProps) {
     enabled: open,
   });
 
-  const rawResults = searchQuery?.results || [];
-  const defaultConcepts =
-    valueset.compose?.include?.flatMap((include) => include.concept || []) ??
-    [];
+  const rawResults = useMemo(() => searchQuery?.results || [], [searchQuery]);
 
-  const detailsToShow = selected
-    ? rawResults.filter((o) => o.code === selected)
-    : rawResults.length
-      ? rawResults
-      : defaultConcepts;
+  const defaultConcepts = useMemo(
+    () =>
+      valueset.compose?.include?.flatMap((include) => include.concept || []) ??
+      [],
+    [valueset.compose],
+  );
+
+  const matched = useMemo(
+    () => (selected ? rawResults.filter((o) => o.code === selected) : []),
+    [selected, rawResults],
+  );
+  const detailsToShow = useMemo(() => {
+    if (matched.length) {
+      return matched;
+    }
+
+    if (!selected) {
+      return rawResults.length ? rawResults : defaultConcepts;
+    }
+
+    if (selected && isFetching) {
+      return defaultConcepts;
+    }
+
+    return [];
+  }, [matched, selected, rawResults, defaultConcepts, isFetching]);
+
+  useEffect(() => {
+    if (open) {
+      setSelected("");
+    }
+  }, [open]);
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -90,17 +114,23 @@ export function ValueSetPreview({ valueset, trigger }: ValueSetPreviewProps) {
           className="px-1 mt-6"
         />
         <div className="mt-6 space-y-4">
-          {detailsToShow.map((item) => (
-            <div
-              key={item.code}
-              className="border rounded-lg p-4 bg-white shadow-sm"
-            >
-              <h3 className="text-lg font-medium">{item.display}</h3>
-              <p className="text-sm text-gray-600">
-                <strong>Code:</strong> {item.code}
-              </p>
+          {detailsToShow.length > 0 ? (
+            detailsToShow.map((item) => (
+              <div
+                key={item.code}
+                className="border rounded-lg p-4 bg-white shadow-sm"
+              >
+                <h3 className="text-lg font-medium">{item.display}</h3>
+                <p className="text-sm text-gray-600">
+                  <strong>Code:</strong> {item.code}
+                </p>
+              </div>
+            ))
+          ) : (
+            <div className="p-4 text-center text-gray-500">
+              {t("no_concepts")}
             </div>
-          ))}
+          )}
         </div>
       </SheetContent>
     </Sheet>
