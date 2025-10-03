@@ -70,11 +70,10 @@ export function FilterTabs({
 
       if (defaultVisibleOptions) {
         // Validate and respect maxVisibleTabs even with defaultVisibleOptions
-        // Validate and respect maxVisibleTabs even with defaultVisibleOptions
         const validDefaultOptions = defaultVisibleOptions
           .filter((v) => !!findOptionByValue(options, v))
           .slice(0, maxVisibleTabs);
-        // map values -> actual option objects for rendering icon/label/value
+
         const mappedDefaultOptions = validDefaultOptions
           .map((v) => findOptionByValue(options, v)!)
           .slice(0, maxVisibleTabs);
@@ -93,7 +92,7 @@ export function FilterTabs({
         const validDefaultOptions = defaultVisibleOptions
           .filter((v) => !!findOptionByValue(options, v))
           .slice(0, maxVisibleTabs);
-        // everything NOT chosen goes to dropdown
+
         return options.filter(
           (option) => !includesByValue(validDefaultOptions, option),
         );
@@ -189,9 +188,7 @@ export function FilterTabs({
               className={getTriggerClassName()}
             >
               <span className="inline-flex items-center gap-1.5">
-                {getIcon(option) ? (
-                  <span className="shrink-0">{getIcon(option)}</span>
-                ) : null}
+                <span className="shrink-0">{getIcon(option)}</span>
                 <span>{t(getLabel(option))}</span>
               </span>
             </TabsTrigger>
@@ -213,9 +210,7 @@ export function FilterTabs({
                   >
                     {
                       <span className="inline-flex items-center gap-1.5">
-                        {getIcon(option) ? (
-                          <span className="shrink-0">{getIcon(option)}</span>
-                        ) : null}
+                        <span className="shrink-0">{getIcon(option)}</span>
                         <span>{t(getLabel(option))}</span>
                       </span>
                     }
