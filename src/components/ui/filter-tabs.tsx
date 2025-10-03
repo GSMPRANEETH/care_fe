@@ -1,5 +1,5 @@
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { cn } from "@/lib/utils";
@@ -13,13 +13,22 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+type FilterTabOption =
+  | string
+  | {
+      value: string;
+      label?: string;
+      icon?: ReactNode;
+    };
+
 interface FilterTabsProps {
   value: string;
   onValueChange: (value: string) => void;
-  options: string[];
+  options: FilterTabOption[];
   label?: string;
   showAllOption?: boolean;
   allOptionLabel?: string;
+  allOptionIcon?: ReactNode;
   className?: string;
   variant?: "background" | "underline";
   maxVisibleTabs?: number;
@@ -34,6 +43,7 @@ export function FilterTabs({
   label,
   showAllOption = true,
   allOptionLabel = "all",
+  allOptionIcon,
   className = "",
   variant = "background",
   maxVisibleTabs = 4,
@@ -42,34 +52,56 @@ export function FilterTabs({
 }: FilterTabsProps) {
   const { t } = useTranslation();
 
+  const isObj = (o: FilterTabOption): o is Exclude<FilterTabOption, string> =>
+    typeof o === "object" && o !== null;
+  const getValue = (o: FilterTabOption) => (isObj(o) ? o.value : o);
+  const getLabel = (o: FilterTabOption) =>
+    isObj(o) ? (o.label ?? o.value) : o;
+  const getIcon = (o: FilterTabOption) => (isObj(o) ? (o.icon ?? null) : null);
+  const findOptionByValue = (opts: FilterTabOption[], v: string) =>
+    opts.find((o) => getValue(o) === v);
+  const includesByValue = (vals: string[], o: FilterTabOption) =>
+    vals.includes(getValue(o));
+
   // State for managing visible tabs when using dropdown
-  const [visibleOptions, setVisibleOptions] = useState<string[]>(() => {
-    if (!showMoreDropdown) return options;
+  const [visibleOptions, setVisibleOptions] = useState<FilterTabOption[]>(
+    () => {
+      if (!showMoreDropdown) return options;
 
-    if (defaultVisibleOptions) {
-      // Validate and respect maxVisibleTabs even with defaultVisibleOptions
-      const validDefaultOptions = defaultVisibleOptions.filter((option) =>
-        options.includes(option),
-      );
-      return validDefaultOptions.slice(0, maxVisibleTabs);
-    }
+      if (defaultVisibleOptions) {
+        // Validate and respect maxVisibleTabs even with defaultVisibleOptions
+        // Validate and respect maxVisibleTabs even with defaultVisibleOptions
+        const validDefaultOptions = defaultVisibleOptions
+          .filter((v) => !!findOptionByValue(options, v))
+          .slice(0, maxVisibleTabs);
+        // map values -> actual option objects for rendering icon/label/value
+        const mappedDefaultOptions = validDefaultOptions
+          .map((v) => findOptionByValue(options, v)!)
+          .slice(0, maxVisibleTabs);
+        return mappedDefaultOptions;
+      }
 
-    return options.slice(0, maxVisibleTabs);
-  });
+      return options.slice(0, maxVisibleTabs);
+    },
+  );
 
-  const [dropdownOptions, setDropdownOptions] = useState<string[]>(() => {
-    if (!showMoreDropdown) return [];
+  const [dropdownOptions, setDropdownOptions] = useState<FilterTabOption[]>(
+    () => {
+      if (!showMoreDropdown) return [];
 
-    if (defaultVisibleOptions) {
-      const validDefaultOptions = defaultVisibleOptions
-        .filter((option) => options.includes(option))
-        .slice(0, maxVisibleTabs);
+      if (defaultVisibleOptions) {
+        const validDefaultOptions = defaultVisibleOptions
+          .filter((v) => !!findOptionByValue(options, v))
+          .slice(0, maxVisibleTabs);
+        // everything NOT chosen goes to dropdown
+        return options.filter(
+          (option) => !includesByValue(validDefaultOptions, option),
+        );
+      }
 
-      return options.filter((option) => !validDefaultOptions.includes(option));
-    }
-
-    return options.slice(maxVisibleTabs);
-  });
+      return options.slice(maxVisibleTabs);
+    },
+  );
 
   const handleValueChange = (newValue: string) => {
     if (newValue === "all") {
@@ -79,7 +111,7 @@ export function FilterTabs({
     }
   };
 
-  const handleDropdownSelect = (selectedOption: string) => {
+  const handleDropdownSelect = (selectedOption: FilterTabOption) => {
     if (!showMoreDropdown) return;
 
     // Safety check: ensure we have visible options to swap
@@ -87,9 +119,11 @@ export function FilterTabs({
       // If no visible options, just add the selected option to visible
       setVisibleOptions([selectedOption]);
       setDropdownOptions(
-        dropdownOptions.filter((option) => option !== selectedOption),
+        dropdownOptions.filter(
+          (option) => getValue(option) !== getValue(selectedOption),
+        ),
       );
-      onValueChange(selectedOption);
+      onValueChange(getValue(selectedOption));
       return;
     }
 
@@ -97,13 +131,15 @@ export function FilterTabs({
     const lastVisibleOption = visibleOptions[visibleOptions.length - 1];
     const newVisibleOptions = [...visibleOptions.slice(0, -1), selectedOption];
     const newDropdownOptions = [
-      ...dropdownOptions.filter((option) => option !== selectedOption),
+      ...dropdownOptions.filter(
+        (option) => getValue(option) !== getValue(selectedOption),
+      ),
       lastVisibleOption,
     ];
 
     setVisibleOptions(newVisibleOptions);
     setDropdownOptions(newDropdownOptions);
-    onValueChange(selectedOption);
+    onValueChange(getValue(selectedOption));
   };
 
   // Styling variants
@@ -138,16 +174,26 @@ export function FilterTabs({
         <TabsList className={getTabsClassName()}>
           {showAllOption && (
             <TabsTrigger value="all" className={getTriggerClassName()}>
-              {t(allOptionLabel)}
+              <span className="inline-flex items-center gap-1.5">
+                {allOptionIcon ? (
+                  <span className="shrink-0">{allOptionIcon}</span>
+                ) : null}
+                <span>{t(allOptionLabel)}</span>
+              </span>
             </TabsTrigger>
           )}
           {tabsToShow.map((option) => (
             <TabsTrigger
-              key={option}
-              value={option}
+              key={getValue(option)}
+              value={getValue(option)}
               className={getTriggerClassName()}
             >
-              {t(option)}
+              <span className="inline-flex items-center gap-1.5">
+                {getIcon(option) ? (
+                  <span className="shrink-0">{getIcon(option)}</span>
+                ) : null}
+                <span>{t(getLabel(option))}</span>
+              </span>
             </TabsTrigger>
           ))}
           {showMoreDropdown && dropdownOptions.length > 0 && (
@@ -161,11 +207,18 @@ export function FilterTabs({
               <DropdownMenuContent align="end">
                 {dropdownOptions.map((option) => (
                   <DropdownMenuItem
-                    key={option}
+                    key={getValue(option)}
                     onClick={() => handleDropdownSelect(option)}
                     className="text-gray-950 font-medium text-sm"
                   >
-                    {t(option)}
+                    {
+                      <span className="inline-flex items-center gap-1.5">
+                        {getIcon(option) ? (
+                          <span className="shrink-0">{getIcon(option)}</span>
+                        ) : null}
+                        <span>{t(getLabel(option))}</span>
+                      </span>
+                    }
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
