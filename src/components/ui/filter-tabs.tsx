@@ -1,5 +1,5 @@
 import { ChevronDown } from "lucide-react";
-import React, { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { cn } from "@/lib/utils";
@@ -13,15 +13,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Support both string and { value, label } option
-type FilterTabOption =
-  | string
-  | { value: string; label: string; icon?: React.ReactNode };
-
 interface FilterTabsProps {
   value: string;
   onValueChange: (value: string) => void;
-  options: FilterTabOption[];
+  options: string[];
   label?: string;
   showAllOption?: boolean;
   allOptionLabel?: string;
@@ -47,27 +42,19 @@ export function FilterTabs({
 }: FilterTabsProps) {
   const { t } = useTranslation();
 
-  // Helpers to extract value and label
-  const getOptionValue = (option: FilterTabOption) =>
-    typeof option === "string" ? option : option.value;
-  const getOptionLabel = (option: FilterTabOption) =>
-    typeof option === "string" ? t(option) : t(option.label);
-
-  // Prepare arrays of values for visible/dropdown logic
-  const optionValues = useMemo(() => options.map(getOptionValue), [options]);
-
   // State for managing visible tabs when using dropdown
   const [visibleOptions, setVisibleOptions] = useState<string[]>(() => {
-    if (!showMoreDropdown) return optionValues;
+    if (!showMoreDropdown) return options;
 
     if (defaultVisibleOptions) {
+      // Validate and respect maxVisibleTabs even with defaultVisibleOptions
       const validDefaultOptions = defaultVisibleOptions.filter((option) =>
-        optionValues.includes(option),
+        options.includes(option),
       );
       return validDefaultOptions.slice(0, maxVisibleTabs);
     }
 
-    return optionValues.slice(0, maxVisibleTabs);
+    return options.slice(0, maxVisibleTabs);
   });
 
   const [dropdownOptions, setDropdownOptions] = useState<string[]>(() => {
@@ -75,48 +62,29 @@ export function FilterTabs({
 
     if (defaultVisibleOptions) {
       const validDefaultOptions = defaultVisibleOptions
-        .filter((option) => optionValues.includes(option))
+        .filter((option) => options.includes(option))
         .slice(0, maxVisibleTabs);
 
-      return optionValues.filter(
-        (option) => !validDefaultOptions.includes(option),
-      );
+      return options.filter((option) => !validDefaultOptions.includes(option));
     }
 
-    return optionValues.slice(maxVisibleTabs);
+    return options.slice(maxVisibleTabs);
   });
 
-  // Keep derived state in sync when inputs change
-  useEffect(() => {
-    if (!showMoreDropdown) {
-      setVisibleOptions(optionValues);
-      setDropdownOptions([]);
-      return;
-    }
-    const baseVisible =
-      (defaultVisibleOptions &&
-        defaultVisibleOptions
-          .filter((opt) => optionValues.includes(opt))
-          .slice(0, maxVisibleTabs)) ||
-      optionValues.slice(0, maxVisibleTabs);
-    setVisibleOptions(baseVisible);
-    setDropdownOptions(
-      optionValues.filter((opt) => !baseVisible.includes(opt)),
-    );
-  }, [optionValues, showMoreDropdown, defaultVisibleOptions, maxVisibleTabs]);
-
   const handleValueChange = (newValue: string) => {
-    if (showAllOption && newValue === "all") {
+    if (newValue === "all") {
       onValueChange("");
-      return;
+    } else {
+      onValueChange(newValue);
     }
-    onValueChange(newValue);
   };
 
   const handleDropdownSelect = (selectedOption: string) => {
     if (!showMoreDropdown) return;
 
+    // Safety check: ensure we have visible options to swap
     if (visibleOptions.length === 0) {
+      // If no visible options, just add the selected option to visible
       setVisibleOptions([selectedOption]);
       setDropdownOptions(
         dropdownOptions.filter((option) => option !== selectedOption),
@@ -125,6 +93,7 @@ export function FilterTabs({
       return;
     }
 
+    // Swap the last visible tab with the selected dropdown option
     const lastVisibleOption = visibleOptions[visibleOptions.length - 1];
     const newVisibleOptions = [...visibleOptions.slice(0, -1), selectedOption];
     const newDropdownOptions = [
@@ -158,11 +127,7 @@ export function FilterTabs({
     return "text-gray-500 font-medium text-sm px-3 flex items-center";
   };
 
-  // Find the option object by value
-  const findOption = (val: string) =>
-    options.find((opt) => getOptionValue(opt) === val);
-
-  const tabsToShow = showMoreDropdown ? visibleOptions : optionValues;
+  const tabsToShow = showMoreDropdown ? visibleOptions : options;
 
   return (
     <div className={cn("flex items-center gap-4", className)}>
@@ -176,19 +141,15 @@ export function FilterTabs({
               {t(allOptionLabel)}
             </TabsTrigger>
           )}
-          {tabsToShow.map((val) => {
-            const option = findOption(val);
-            return (
-              <TabsTrigger
-                key={val}
-                value={val}
-                className={getTriggerClassName()}
-              >
-                {option && typeof option === "object" && option.icon}
-                {option ? getOptionLabel(option) : t(val)}
-              </TabsTrigger>
-            );
-          })}
+          {tabsToShow.map((option) => (
+            <TabsTrigger
+              key={option}
+              value={option}
+              className={getTriggerClassName()}
+            >
+              {t(option)}
+            </TabsTrigger>
+          ))}
           {showMoreDropdown && dropdownOptions.length > 0 && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -198,21 +159,15 @@ export function FilterTabs({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                {dropdownOptions.map((val) => {
-                  const option = findOption(val);
-                  return (
-                    <DropdownMenuItem
-                      key={val}
-                      onClick={() => handleDropdownSelect(val)}
-                      className="text-gray-950 font-medium text-sm"
-                    >
-                      <span className="flex items-center gap-1">
-                        {option && typeof option === "object" && option.icon}
-                        {option ? getOptionLabel(option) : t(val)}
-                      </span>
-                    </DropdownMenuItem>
-                  );
-                })}
+                {dropdownOptions.map((option) => (
+                  <DropdownMenuItem
+                    key={option}
+                    onClick={() => handleDropdownSelect(option)}
+                    className="text-gray-950 font-medium text-sm"
+                  >
+                    {t(option)}
+                  </DropdownMenuItem>
+                ))}
               </DropdownMenuContent>
             </DropdownMenu>
           )}

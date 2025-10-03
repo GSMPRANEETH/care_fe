@@ -1,11 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowLeftIcon, ChevronDown } from "lucide-react";
 import { navigate } from "raviger";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { FilterTabs } from "@/components/ui/filter-tabs";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import Page from "@/components/Common/Page";
 
@@ -39,6 +46,27 @@ export default function DispensesView({
   ];
 
   const allStatuses = Object.values(MedicationDispenseStatus);
+  const [visibleTabs, setVisibleTabs] = useState<MedicationDispenseStatus[]>(
+    defaultVisibleStatuses,
+  );
+  const [dropdownItems, setDropdownItems] = useState<
+    MedicationDispenseStatus[]
+  >(allStatuses.filter((status) => !defaultVisibleStatuses.includes(status)));
+
+  const handleDropdownSelect = (value: MedicationDispenseStatus) => {
+    const lastVisibleTab = visibleTabs[visibleTabs.length - 1];
+    const newVisibleTabs = [...visibleTabs.slice(0, -1), value];
+    const newDropdownItems = [
+      ...dropdownItems.filter((item) => item !== value),
+      lastVisibleTab,
+    ];
+
+    setVisibleTabs(newVisibleTabs);
+    setDropdownItems(newDropdownItems);
+    navigate(
+      `/facility/${facilityId}/locations/${locationId}/medication_dispense/patient/${patientId}/${value}`,
+    );
+  };
 
   const { data: patientData } = useQuery({
     queryKey: ["patient", patientId],
@@ -47,11 +75,6 @@ export default function DispensesView({
     }),
     enabled: !!patientId,
   });
-
-  const tabOptions = allStatuses.map((statusValue) => ({
-    value: statusValue,
-    label: statusValue,
-  }));
 
   return (
     <Page title={t("pharmacy_medications")} hideTitleOnPage>
@@ -76,35 +99,63 @@ export default function DispensesView({
           <PatientHeader patient={patientData} facilityId={facilityId} />
         </Card>
       )}
-      <FilterTabs
+      <Tabs
         value={status}
         onValueChange={(value) =>
           navigate(
             `/facility/${facilityId}/locations/${locationId}/medication_dispense/patient/${patientId}/${value}`,
           )
         }
-        options={tabOptions}
-        variant="underline"
-        showAllOption={false}
-        showMoreDropdown={true}
-        maxVisibleTabs={4}
-        defaultVisibleOptions={defaultVisibleStatuses}
-      />
+      >
+        <TabsList className="w-full justify-evenly sm:justify-start border-b rounded-none bg-transparent p-0 h-auto overflow-x-auto">
+          {visibleTabs.map((statusValue) => (
+            <TabsTrigger
+              key={statusValue}
+              value={statusValue}
+              className="border-b-3 px-1.5 sm:px-2.5 py-2 text-gray-600 font-semibold hover:text-gray-900 data-[state=active]:border-b-primary-700  data-[state=active]:text-primary-800 data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none"
+            >
+              {t(statusValue)}
+            </TabsTrigger>
+          ))}
+          {dropdownItems.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="text-gray-500 font-semibold hover:text-gray-900 hover:bg-transparent pb-2.5 px-2.5"
+                >
+                  {t("more")}
+                  <ChevronDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {dropdownItems.map((statusValue) => (
+                  <DropdownMenuItem
+                    key={statusValue}
+                    onClick={() => handleDropdownSelect(statusValue)}
+                    className="text-gray-950 font-medium text-sm"
+                  >
+                    {t(statusValue)}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </TabsList>
 
-      <div>
-        {Object.values(MedicationDispenseStatus).map((statusValue) =>
-          status === statusValue ? (
-            <div key={statusValue} className="p-2">
+        <div>
+          {Object.values(MedicationDispenseStatus).map((statusValue) => (
+            <TabsContent key={statusValue} value={statusValue} className="p-2">
               <DispensedMedicationList
                 facilityId={facilityId}
                 patientId={patientId}
                 locationId={locationId}
                 status={statusValue}
               />
-            </div>
-          ) : null,
-        )}
-      </div>
+            </TabsContent>
+          ))}
+        </div>
+      </Tabs>
     </Page>
   );
 }
