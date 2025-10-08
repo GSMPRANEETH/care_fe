@@ -29,6 +29,7 @@ import { tagFilter } from "@/components/ui/multi-filter/filterConfigs";
 import MultiFilter from "@/components/ui/multi-filter/MultiFilter";
 import useMultiFilterState from "@/components/ui/multi-filter/utils/useMultiFilterState";
 import { createFilterConfig } from "@/components/ui/multi-filter/utils/Utils";
+import useBreakpoints from "@/hooks/useBreakpoints";
 import {
   ENCOUNTER_CLASS_ICONS,
   ENCOUNTER_CLASSES_COLORS,
@@ -164,6 +165,14 @@ export default function MedicationRequestList({
     })),
   ];
 
+  const maxVisibleTabs = useBreakpoints({
+    default: 2,
+    xs: 3,
+    sm: 4,
+    md: 5,
+    lg: 7,
+  });
+
   return (
     <Page title={t("prescription_queue")}>
       {/* Priority tabs with original styling */}
@@ -197,6 +206,7 @@ export default function MedicationRequestList({
             allOptionLabel="all_prescriptions"
             showAllOption={true}
             variant="background"
+            maxVisibleTabs={maxVisibleTabs}
           />
         </div>
         <div className="flex items-center gap-2">

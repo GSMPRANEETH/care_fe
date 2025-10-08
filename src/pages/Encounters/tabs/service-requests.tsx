@@ -75,7 +75,9 @@ export const EncounterServiceRequestTab = () => {
           <FilterTabs
             value={qParams.status || ""}
             onValueChange={(value) => updateQuery({ status: value })}
-            options={Object.values(Status)}
+            options={Object.values(Status).map((s) => ({
+              value: s,
+            }))}
             variant="background"
             showAllOption={true}
             allOptionLabel="all"
