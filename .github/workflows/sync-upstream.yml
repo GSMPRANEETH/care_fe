@@ -1,0 +1,82 @@
+name: Sync Fork with Upstream
+
+on:
+  # Run daily at 00:00 UTC
+  schedule:
+    - cron: '0 0 * * *'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  sync:
+    name: Sync with upstream
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/ohcnetwork/care_fe.git || true
+          git remote -v
+      
+      - name: Fetch upstream changes
+        run: |
+          git fetch upstream
+          git fetch origin
+      
+      - name: Sync develop branch
+        run: |
+          echo "Syncing develop branch..."
+          git checkout develop || git checkout -b develop origin/develop
+          
+          # Check if there are changes to merge
+          if git merge-base --is-ancestor upstream/develop HEAD; then
+            echo "Already up to date with upstream/develop"
+          else
+            echo "Merging upstream/develop..."
+            git merge upstream/develop --no-edit
+          fi
+      
+      - name: Push changes to origin
+        run: |
+          echo "Pushing changes to origin/develop..."
+          git push origin develop
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Sync staging branch (if exists)
+        run: |
+          echo "Checking for staging branch..."
+          if git ls-remote --heads origin staging | grep -q staging; then
+            echo "Syncing staging branch..."
+            git checkout staging || git checkout -b staging origin/staging
+            
+            if git ls-remote --heads upstream staging | grep -q staging; then
+              if git merge-base --is-ancestor upstream/staging HEAD; then
+                echo "Already up to date with upstream/staging"
+              else
+                echo "Merging upstream/staging..."
+                git merge upstream/staging --no-edit
+                echo "Pushing changes to origin/staging..."
+                git push origin staging
+              fi
+            else
+              echo "No staging branch in upstream, skipping..."
+            fi
+          else
+            echo "No staging branch in origin, skipping..."
+          fi
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
