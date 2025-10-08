@@ -149,7 +149,7 @@ export default function MedicationRequestList({
   const tabOptions = [
     ...visibleTabs.map((tab) => ({
       value: tab,
-      label: t(`encounter_class__${tab}`),
+      label: `encounter_class__${tab}`,
       icon: React.createElement(ENCOUNTER_CLASS_ICONS[tab as EncounterClass], {
         className: "size-4 text-gray-500",
       }),
@@ -157,7 +157,7 @@ export default function MedicationRequestList({
 
     ...dropdownItems.map((tab) => ({
       value: tab,
-      label: t(`encounter_class__${tab}`),
+      label: `encounter_class__${tab}`,
       icon: React.createElement(ENCOUNTER_CLASS_ICONS[tab as EncounterClass], {
         className: "size-4 text-gray-500",
       }),
@@ -178,7 +178,7 @@ export default function MedicationRequestList({
             PrescriptionStatus.cancelled,
           ].map((key) => ({
             value: key,
-            label: t(`prescription_status__${key}`),
+            label: `prescription_status__${key}`,
           }))}
           showAllOption={false}
           variant="underline"
