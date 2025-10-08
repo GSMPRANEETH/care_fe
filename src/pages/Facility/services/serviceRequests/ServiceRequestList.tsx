@@ -292,7 +292,9 @@ export default function ServiceRequestList({
             <FilterTabs
               value={qParams.status || Status.active}
               onValueChange={(value) => updateQuery({ status: value })}
-              options={Object.values(Status)}
+              options={Object.values(Status).map((s) => ({
+                value: s,
+              }))}
               variant="underline"
               showMoreDropdown={true}
               maxVisibleTabs={4}
