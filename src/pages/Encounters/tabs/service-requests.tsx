@@ -83,9 +83,9 @@ export const EncounterServiceRequestTab = () => {
             showMoreDropdown={true}
             maxVisibleTabs={maxVisibleTabs}
             defaultVisibleOptions={[
-              Status.active,
-              Status.completed,
-              Status.draft,
+              { value: Status.active },
+              { value: Status.completed },
+              { value: Status.draft },
             ]}
             className="w-auto overflow-x-auto"
           />

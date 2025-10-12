@@ -301,10 +301,10 @@ export default function ServiceRequestList({
               showMoreDropdown={true}
               maxVisibleTabs={4}
               defaultVisibleOptions={[
-                Status.active,
-                Status.on_hold,
-                Status.completed,
-                Status.draft,
+                { value: Status.active },
+                { value: Status.on_hold },
+                { value: Status.completed },
+                { value: Status.draft },
               ]}
               showAllOption={false}
             />
