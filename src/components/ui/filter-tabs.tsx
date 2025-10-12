@@ -58,7 +58,7 @@ export function FilterTabs({
       if (defaultVisibleOptions) {
         // Validate and respect maxVisibleTabs even with defaultVisibleOptions
         const validDefaultOptions = defaultVisibleOptions.filter((option) =>
-          options.includes(option),
+          options.some((opt) => opt.value === option.value),
         );
         return validDefaultOptions.slice(0, maxVisibleTabs);
       }
@@ -73,11 +73,12 @@ export function FilterTabs({
 
       if (defaultVisibleOptions) {
         const validDefaultOptions = defaultVisibleOptions
-          .filter((option) => options.includes(option))
+          .filter((option) => options.some((opt) => opt.value === option.value))
           .slice(0, maxVisibleTabs);
 
         return options.filter(
-          (option) => !validDefaultOptions.includes(option),
+          (option) =>
+            !validDefaultOptions.some((opt) => opt.value === option.value),
         );
       }
 
