@@ -171,9 +171,7 @@ export function FilterTabs({
               className={getTriggerClassName()}
             >
               <span className="inline-flex items-center gap-1.5">
-                <span className="shrink-0">
-                  {option.icon ? option.icon : null}
-                </span>
+                <span className="shrink-0">{option.icon}</span>
                 <span>{t(option.label ? option.label : option.value)}</span>
               </span>
             </TabsTrigger>
@@ -193,16 +191,12 @@ export function FilterTabs({
                     onClick={() => handleDropdownSelect(option)}
                     className="text-gray-950 font-medium text-sm"
                   >
-                    {
-                      <span className="inline-flex items-center gap-1.5">
-                        <span className="shrink-0">
-                          {option.icon ? option.icon : null}
-                        </span>
-                        <span>
-                          {t(option.label ? option.label : option.value)}
-                        </span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="shrink-0">{option.icon}</span>
+                      <span>
+                        {t(option.label ? option.label : option.value)}
                       </span>
-                    }
+                    </span>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
