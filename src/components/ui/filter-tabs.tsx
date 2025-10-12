@@ -31,7 +31,7 @@ interface FilterTabsProps {
   variant?: "background" | "underline";
   maxVisibleTabs?: number;
   showMoreDropdown?: boolean;
-  defaultVisibleOptions?: string[];
+  defaultVisibleOptions?: FilterTabOption[];
 }
 
 export function FilterTabs({
@@ -57,13 +57,10 @@ export function FilterTabs({
 
       if (defaultVisibleOptions) {
         // Validate and respect maxVisibleTabs even with defaultVisibleOptions
-        const validDefaultOptions = defaultVisibleOptions
-          .map((optionValue) =>
-            options.find((opt) => opt.value === optionValue),
-          )
-          .filter((opt): opt is FilterTabOption => !!opt)
-          .slice(0, maxVisibleTabs);
-        return validDefaultOptions;
+        const validDefaultOptions = defaultVisibleOptions.filter((option) =>
+          options.includes(option),
+        );
+        return validDefaultOptions.slice(0, maxVisibleTabs);
       }
 
       return options.slice(0, maxVisibleTabs);
@@ -76,10 +73,7 @@ export function FilterTabs({
 
       if (defaultVisibleOptions) {
         const validDefaultOptions = defaultVisibleOptions
-          .map((optionValue) =>
-            options.find((opt) => opt.value === optionValue),
-          )
-          .filter((opt): opt is FilterTabOption => !!opt)
+          .filter((option) => options.includes(option))
           .slice(0, maxVisibleTabs);
 
         return options.filter(

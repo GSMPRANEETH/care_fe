@@ -205,6 +205,7 @@ export default function MedicationRequestList({
             allOptionIcon={<NotepadText className="size-4 text-gray-500" />}
             allOptionLabel="all_prescriptions"
             showAllOption={true}
+            showMoreDropdown
             variant="background"
             maxVisibleTabs={maxVisibleTabs}
           />
