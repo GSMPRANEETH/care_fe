@@ -13,11 +13,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-type FilterTabOption = {
+interface FilterTabOption {
   value: string;
   label?: string;
   icon?: ReactNode;
-};
+}
 
 interface FilterTabsProps {
   value: string;
