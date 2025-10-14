@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowUpRightSquare, NotepadText } from "lucide-react";
 import { navigate } from "raviger";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Badge } from "@/components/ui/badge";
@@ -69,14 +69,6 @@ export default function MedicationRequestList({
   const selectedTags = tagQueries
     .map((query) => query.data)
     .filter(Boolean) as TagConfig[];
-
-  // State for visible tabs and dropdown items
-  const [visibleTabs] = useState<("all" | EncounterClass)[]>([
-    "imp",
-    "amb",
-    "emer",
-  ]);
-  const [dropdownItems] = useState<EncounterClass[]>(["obsenc", "vr", "hh"]);
 
   // Create filter configurations
   const filters = useMemo(
@@ -147,23 +139,15 @@ export default function MedicationRequestList({
     }),
   });
 
-  const tabOptions = [
-    ...visibleTabs.map((tab) => ({
+  const tabOptions = ["imp", "amb", "emer", "obsenc", "vr", "hh"].map(
+    (tab) => ({
       value: tab,
       label: `encounter_class__${tab}`,
       icon: React.createElement(ENCOUNTER_CLASS_ICONS[tab as EncounterClass], {
         className: "size-4 text-gray-500",
       }),
-    })),
-
-    ...dropdownItems.map((tab) => ({
-      value: tab,
-      label: `encounter_class__${tab}`,
-      icon: React.createElement(ENCOUNTER_CLASS_ICONS[tab as EncounterClass], {
-        className: "size-4 text-gray-500",
-      }),
-    })),
-  ];
+    }),
+  );
 
   const maxVisibleTabs = useBreakpoints({
     default: 2,
