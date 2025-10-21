@@ -150,8 +150,7 @@ export default function MedicationRequestList({
   );
 
   const maxVisibleTabs = useBreakpoints({
-    default: 2,
-    xs: 3,
+    default: 3,
     sm: 4,
     md: 5,
     lg: 7,
