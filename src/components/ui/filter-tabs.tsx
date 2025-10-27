@@ -172,7 +172,9 @@ export function FilterTabs({
               className={getTriggerClassName()}
             >
               <span className="inline-flex items-center gap-1.5">
-                <span className="shrink-0">{option.icon}</span>
+                {option.icon ? (
+                  <span className="shrink-0">{option.icon}</span>
+                ) : null}
                 <span>{t(option.label ? option.label : option.value)}</span>
               </span>
             </TabsTrigger>
