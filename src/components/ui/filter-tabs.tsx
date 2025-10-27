@@ -157,12 +157,14 @@ export function FilterTabs({
         <TabsList className={getTabsClassName()}>
           {showAllOption && (
             <TabsTrigger value="all" className={getTriggerClassName()}>
-              <span className="inline-flex items-center gap-1.5">
-                {allOptionIcon ? (
+              {allOptionIcon ? (
+                <span className="inline-flex items-center gap-1.5">
                   <span className="shrink-0">{allOptionIcon}</span>
-                ) : null}
-                <span>{t(allOptionLabel)}</span>
-              </span>
+                  <span>{t(allOptionLabel)}</span>
+                </span>
+              ) : (
+                t(allOptionLabel)
+              )}
             </TabsTrigger>
           )}
           {tabsToShow.map((option) => (
@@ -171,12 +173,14 @@ export function FilterTabs({
               value={option.value}
               className={getTriggerClassName()}
             >
-              <span className="inline-flex items-center gap-1.5">
-                {option.icon ? (
+              {option.icon ? (
+                <span className="inline-flex items-center gap-1.5">
                   <span className="shrink-0">{option.icon}</span>
-                ) : null}
-                <span>{t(option.label ? option.label : option.value)}</span>
-              </span>
+                  <span>{t(option.label ?? option.value)}</span>
+                </span>
+              ) : (
+                t(option.label ?? option.value)
+              )}
             </TabsTrigger>
           ))}
           {showMoreDropdown && dropdownOptions.length > 0 && (
@@ -194,14 +198,14 @@ export function FilterTabs({
                     onClick={() => handleDropdownSelect(option)}
                     className="text-gray-950 font-medium text-sm"
                   >
-                    <span className="inline-flex items-center gap-1.5">
-                      {option.icon ? (
+                    {option.icon ? (
+                      <span className="inline-flex items-center gap-1.5">
                         <span className="shrink-0">{option.icon}</span>
-                      ) : null}
-                      <span>
-                        {t(option.label ? option.label : option.value)}
+                        <span>{t(option.label ?? option.value)}</span>
                       </span>
-                    </span>
+                    ) : (
+                      t(option.label ?? option.value)
+                    )}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>

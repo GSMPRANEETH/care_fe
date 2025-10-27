@@ -139,15 +139,13 @@ export default function MedicationRequestList({
     }),
   });
 
-  const tabOptions = ["imp", "amb", "emer", "obsenc", "vr", "hh"].map(
-    (tab) => ({
-      value: tab,
-      label: `encounter_class__${tab}`,
-      icon: React.createElement(ENCOUNTER_CLASS_ICONS[tab as EncounterClass], {
-        className: "size-4 text-gray-500",
-      }),
+  const tabOptions = Object.keys(ENCOUNTER_CLASS_ICONS).map((tab) => ({
+    value: tab,
+    label: `encounter_class__${tab}`,
+    icon: React.createElement(ENCOUNTER_CLASS_ICONS[tab as EncounterClass], {
+      className: "size-4 text-gray-500",
     }),
-  );
+  }));
 
   const maxVisibleTabs = useBreakpoints({
     default: 3,
@@ -183,7 +181,7 @@ export default function MedicationRequestList({
           <FilterTabs
             value={qParams.encounter_class || "all"}
             onValueChange={handleTabSelect}
-            className="overflow-y-auto text-gray-950"
+            className="overflow-y-auto"
             options={tabOptions}
             allOptionIcon={<NotepadText className="size-4 text-gray-500" />}
             allOptionLabel="all_prescriptions"
