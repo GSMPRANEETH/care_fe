@@ -244,14 +244,17 @@ export default function SearchInput({
 
       if (open) {
         if (e.key === "ArrowDown") {
+          e.preventDefault();
           setFocusedIndex((prevIndex) =>
             prevIndex === unselectedOptions.length - 1 ? 0 : prevIndex + 1,
           );
         } else if (e.key === "ArrowUp") {
+          e.preventDefault();
           setFocusedIndex((prevIndex) =>
             prevIndex === 0 ? unselectedOptions.length - 1 : prevIndex - 1,
           );
         } else if (e.key === "Enter") {
+          e.preventDefault();
           if (focusedIndex >= 0 && focusedIndex < unselectedOptions.length) {
             const selectedOptionIndex = options.findIndex(
               (option) => option.key === unselectedOptions[focusedIndex].key,
@@ -378,11 +381,9 @@ export default function SearchInput({
                                   "flex items-center p-2 rounded-md cursor-pointer",
                                   {
                                     "bg-gray-100": focusedIndex === index,
-                                    "hover:bg-secondary-100": true,
                                   },
                                 )}
                                 onMouseEnter={() => setFocusedIndex(index)}
-                                onMouseLeave={() => setFocusedIndex(-1)}
                               >
                                 <span className="flex-1 text-sm">
                                   {t(option.display)}
