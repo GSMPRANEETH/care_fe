@@ -148,6 +148,14 @@ export function ComboboxQuantityInput({
             e.preventDefault();
             inputRef.current?.focus();
           }}
+          onInteractOutside={(e) => {
+            // Prevent closing when the Android keyboard causes focus changes
+            // Allow closing when clicking on the input itself or outside the component
+            const target = e.target as HTMLElement;
+            if (target === inputRef.current || target.closest("input")) {
+              e.preventDefault();
+            }
+          }}
         >
           <Command>
             <CommandList>

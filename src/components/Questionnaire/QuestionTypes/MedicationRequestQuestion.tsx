@@ -1101,7 +1101,18 @@ const MedicationRequestGridRow: React.FC<MedicationRequestGridRowProps> = ({
             </Popover>
           ) : (
             <Dialog open={showDosageDialog} onOpenChange={setShowDosageDialog}>
-              <DialogContent>
+              <DialogContent
+                onInteractOutside={(e) => {
+                  // Prevent closing when interacting with nested popovers (e.g., unit selection in ComboboxQuantityInput)
+                  const target = e.target as HTMLElement;
+                  if (
+                    target.closest('[data-slot="popover-content"]') ||
+                    target.closest('[data-slot="command"]')
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
+              >
                 <DosageDialog
                   dosageRange={dosageInstruction.dose_and_rate.dose_range}
                 />
