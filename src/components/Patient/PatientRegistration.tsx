@@ -444,6 +444,7 @@ const PatientBasicsContent = ({
                 tabIndex={0}
                 placeholder={t("type_name")}
                 {...field}
+                value={field.value ?? ""}
               />
             </FormControl>
             <FormMessage />
@@ -626,6 +627,7 @@ const PatientBasicsContent = ({
               <FormLabel>{t("blood_group")}</FormLabel>
               <Select
                 {...field}
+                value={field.value ?? ""}
                 onValueChange={field.onChange}
                 defaultValue={field.value}
               >
@@ -659,7 +661,11 @@ const PatientBasicsContent = ({
                 <FormLabel aria-required>{config.display}</FormLabel>
                 <FormDescription>{config.description}</FormDescription>
                 <FormControl>
-                  <Input {...field} placeholder={t("enter_identifier_value")} />
+                  <Input
+                    {...field}
+                    value={field.value ?? ""}
+                    placeholder={t("enter_identifier_value")}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -788,6 +794,7 @@ const AdditionalDetailsContent = ({
             <FormControl>
               <Input
                 {...field}
+                value={field.value ?? ""}
                 placeholder={t("enter_pincode")}
                 onChange={(e) => {
                   const value = e.target.value
@@ -838,7 +845,11 @@ const AdditionalDetailsContent = ({
                 <FormLabel>{config.display}</FormLabel>
                 <FormDescription>{config.description}</FormDescription>
                 <FormControl>
-                  <Input {...field} placeholder={t("enter_identifier_value")} />
+                  <Input
+                    {...field}
+                    value={field.value ?? ""}
+                    placeholder={t("enter_identifier_value")}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
