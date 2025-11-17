@@ -347,7 +347,7 @@ export function InvoiceShow({
             <Button
               variant="outline_primary"
               onClick={() => handleStatusChange(InvoiceStatus.issued)}
-              disabled={isUpdatingInvoice}
+              disabled={isUpdatingInvoice || invoice.charge_items.length === 0}
             >
               <CareIcon icon="l-check" className="size-5" />
               {t("issue_invoice")}

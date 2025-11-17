@@ -636,7 +636,11 @@ export function CreateInvoicePage({
             <Button
               type="submit"
               variant="primary_gradient"
-              disabled={createMutation.isPending || isAddChargeItemsOpen}
+              disabled={
+                createMutation.isPending ||
+                isAddChargeItemsOpen ||
+                form.getValues("charge_items").length === 0
+              }
             >
               {createMutation.isPending ? (
                 <div className="flex items-center gap-2">
