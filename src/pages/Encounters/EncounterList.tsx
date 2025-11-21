@@ -272,12 +272,16 @@ export function EncounterList({
                   />
                 </div>
                 <PatientIdentifierFilter
-                  onSelect={(patientId) =>
-                    updateQuery({ patient_filter: patientId })
+                  onSelect={(patientId, patientName) =>
+                    updateQuery({
+                      patient_filter: patientId,
+                      patient_name: patientName,
+                    })
                   }
                   placeholder={t("filter_by_identifier")}
                   className="w-full sm:w-auto rounded-md h-9 text-gray-500 shadow-sm"
                   patientId={qParams.patient_filter}
+                  patientName={qParams.patient_name}
                 />
                 <MultiFilter
                   selectedFilters={selectedFilters}
@@ -297,10 +301,7 @@ export function EncounterList({
           </div>
         </div>
 
-        <div
-          className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3"
-          data-cy="encounter-list-cards"
-        >
+        <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
           {isFetching ? (
             <CardGridSkeleton count={6} />
           ) : encounters.length === 0 ? (
