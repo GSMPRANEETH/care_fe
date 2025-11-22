@@ -5,11 +5,14 @@ test.use({ storageState: "tests/.auth/user.json" });
 
 function generatePatientData() {
   const timestamp = Date.now();
+  const randomPhoneDigits = () => {
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    return array[0] % 1000000000;
+  };
   return {
     name: `Test Patient ${timestamp}`,
-    phoneNumber: `9${Math.floor(Math.random() * 1000000000)
-      .toString()
-      .padStart(9, "0")}`,
+    phoneNumber: `9${randomPhoneDigits().toString().padStart(9, "0")}`,
     gender: "Male",
     dateOfBirth: {
       day: "16",
@@ -22,9 +25,7 @@ function generatePatientData() {
     address: "123 Test Street, Test City",
     emergencyContact: {
       name: `Emergency Contact ${timestamp}`,
-      phoneNumber: `9${Math.floor(Math.random() * 1000000000)
-        .toString()
-        .padStart(9, "0")}`,
+      phoneNumber: `9${randomPhoneDigits().toString().padStart(9, "0")}`,
     },
   };
 }
