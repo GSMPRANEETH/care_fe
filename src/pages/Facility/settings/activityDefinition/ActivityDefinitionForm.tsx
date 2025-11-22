@@ -1040,7 +1040,10 @@ function ActivityDefinitionFormContent({
               >
                 {t("cancel")}
               </Button>
-              <Button type="submit" disabled={isPending}>
+              <Button
+                type="submit"
+                disabled={isPending || !form.formState.isDirty}
+              >
                 {isPending
                   ? isEditMode
                     ? t("saving")

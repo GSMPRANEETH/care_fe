@@ -297,7 +297,10 @@ export function TokenCategoryFormContent({
             <Button type="button" variant="outline" onClick={onCancel}>
               {t("cancel")}
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button
+              type="submit"
+              disabled={isPending || !form.formState.isDirty}
+            >
               {isPending ? t("saving") : isEditMode ? t("update") : t("create")}
             </Button>
           </div>

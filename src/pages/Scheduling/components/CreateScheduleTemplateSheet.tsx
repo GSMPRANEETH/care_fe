@@ -752,7 +752,11 @@ export default function CreateScheduleTemplateSheet({
                   </Button>
                 </SheetClose>
 
-                <Button variant="primary" type="submit" disabled={isPending}>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  disabled={isPending || !form.formState.isDirty}
+                >
                   {isPending ? t("saving") : t("save")}
                 </Button>
               </SheetFooter>

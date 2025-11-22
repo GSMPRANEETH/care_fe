@@ -241,9 +241,7 @@ export default function SubQueueFormSheet({
                 </Button>
                 <Button
                   type="submit"
-                  disabled={
-                    isPending || (isEditMode && !form.formState.isDirty)
-                  }
+                  disabled={isPending || !form.formState.isDirty}
                   className="flex-1"
                 >
                   {isPending

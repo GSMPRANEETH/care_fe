@@ -1247,7 +1247,7 @@ export function ChargeItemDefinitionForm({
           <Button
             type="submit"
             size={minimal ? "sm" : "default"}
-            disabled={isPending || (isUpdate && !isDirty)}
+            disabled={isPending || !isDirty}
           >
             {isPending ? (
               <>

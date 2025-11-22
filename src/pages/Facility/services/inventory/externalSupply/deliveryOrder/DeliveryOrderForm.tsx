@@ -398,7 +398,10 @@ export default function DeliveryOrderForm({
                 {t("cancel")}
                 <ShortcutBadge actionId="cancel-action" />
               </Button>
-              <Button type="submit" disabled={isPending}>
+              <Button
+                type="submit"
+                disabled={isPending || !form.formState.isDirty}
+              >
                 {isPending
                   ? isEditMode
                     ? t("saving")

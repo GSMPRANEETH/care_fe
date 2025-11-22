@@ -1033,10 +1033,7 @@ function ProductKnowledgeFormContent({
                   {t("cancel")}
                 </Link>
               </Button>
-              <Button
-                type="submit"
-                disabled={isPending || (isEditMode && !isDirty)}
-              >
+              <Button type="submit" disabled={isPending || !isDirty}>
                 {isPending ? (
                   t("saving")
                 ) : (

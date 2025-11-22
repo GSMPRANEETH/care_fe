@@ -750,7 +750,7 @@ export function SpecimenDefinitionForm({
           >
             {t("cancel")}
           </Button>
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading || !form.formState.isDirty}>
             {t("save")}
           </Button>
         </div>
