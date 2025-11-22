@@ -463,9 +463,13 @@ function HealthcareServiceFormContent({
               <Button
                 variant="outline"
                 onClick={() =>
-                  navigate(
-                    `/facility/${facilityId}/settings/healthcare_services`,
-                  )
+                  isEditMode && healthcareServiceId
+                    ? navigate(
+                        `/facility/${facilityId}/settings/healthcare_services/${healthcareServiceId}`,
+                      )
+                    : navigate(
+                        `/facility/${facilityId}/settings/healthcare_services`,
+                      )
                 }
               >
                 {t("cancel")}

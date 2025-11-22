@@ -221,6 +221,8 @@ export function SpecimenDefinitionForm({
     });
   };
 
+  const slug = initialData?.slug;
+
   return (
     <Form {...form}>
       <form
@@ -745,7 +747,13 @@ export function SpecimenDefinitionForm({
             type="button"
             variant="outline"
             onClick={() =>
-              navigate(`/facility/${facilityId}/settings/specimen_definitions`)
+              slug
+                ? navigate(
+                    `/facility/${facilityId}/settings/specimen_definitions/${slug}`,
+                  )
+                : navigate(
+                    `/facility/${facilityId}/settings/specimen_definitions`,
+                  )
             }
           >
             {t("cancel")}

@@ -148,7 +148,10 @@ export function ProductFormContent({
   slug,
   containerClassName,
   onSuccess = () => navigate(`/facility/${facilityId}/settings/product`),
-  onCancel = () => navigate(`/facility/${facilityId}/settings/product`),
+  onCancel = () =>
+    productId
+      ? navigate(`/facility/${facilityId}/settings/product/${productId}`)
+      : navigate(`/facility/${facilityId}/settings/product`),
   disableButtons = false,
   enabled = true,
   ref,
@@ -256,7 +259,7 @@ export function ProductFormContent({
         queryKey: ["product", productId],
       });
       toast.success(t("product_updated_successfully"));
-      navigate(`/facility/${facilityId}/settings/product`);
+      navigate(`/facility/${facilityId}/settings/product/${productId}`);
     },
   });
 

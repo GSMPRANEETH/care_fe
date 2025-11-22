@@ -86,6 +86,12 @@ export function UpdateChargeItemDefinition({
     );
   };
 
+  const handleCancel = () => {
+    navigate(
+      `/facility/${facilityId}/settings/charge_item_definitions/${slug}`,
+    );
+  };
+
   return (
     <Page
       title={t("update_charge_item_definition")}
@@ -106,6 +112,7 @@ export function UpdateChargeItemDefinition({
           onSuccess={(chargeItemDefinition) =>
             handleSuccess(chargeItemDefinition.slug)
           }
+          onCancel={handleCancel}
         />
       </div>
     </Page>

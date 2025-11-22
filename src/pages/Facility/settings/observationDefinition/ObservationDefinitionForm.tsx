@@ -962,9 +962,13 @@ function ObservationDefinitionFormContent({
                 type="button"
                 variant="outline"
                 onClick={() =>
-                  navigate(
-                    `/facility/${facilityId}/settings/observation_definitions`,
-                  )
+                  observationSlug
+                    ? navigate(
+                        `/facility/${facilityId}/settings/observation_definitions/${observationSlug}`,
+                      )
+                    : navigate(
+                        `/facility/${facilityId}/settings/observation_definitions`,
+                      )
                 }
               >
                 {t("cancel")}
