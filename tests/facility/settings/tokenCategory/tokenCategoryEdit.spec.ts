@@ -104,6 +104,7 @@ test.describe("Token Category Edit - Permission Tests", () => {
       );
 
       // Step 7: Verify the edit was successful
+      await page.getByRole("button", { name: "Back" }).click();
       await page
         .getByRole("textbox", { name: "Search Token Categories" })
         .fill(updatedName);
