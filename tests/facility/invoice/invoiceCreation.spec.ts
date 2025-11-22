@@ -30,7 +30,14 @@ function generatePatientData() {
 }
 
 test.describe("Invoice Creation", () => {
-  test.beforeAll(async ({ page }) => {
+  test.beforeAll(async ({ browser }) => {
+    // Create an isolated context for setup using the same storage state so we
+    // don't rely on the test-scoped `page` fixture inside beforeAll.
+    const context = await browser.newContext({
+      storageState: "tests/.auth/user.json",
+    });
+    const page = await context.newPage();
+
     // Navigate to home page (user is already authenticated)
     await page.goto("/");
 
@@ -132,6 +139,8 @@ test.describe("Invoice Creation", () => {
     await page.getByRole("button", { name: "Create Account" }).click();
     await page.getByRole("textbox", { name: "Name" }).fill("Test Account");
     await page.getByRole("button", { name: "Create" }).click();
+
+    await context.close();
   });
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
@@ -149,13 +158,6 @@ test.describe("Invoice Creation", () => {
     await page.getByRole("button", { name: "Go to account" }).first().click();
 
     await page.getByRole("button", { name: "Invoice" }).click();
-
-    // Quick sanity-check that the page is shown in an authenticated state.
-    // If this fails, the storage file might be missing/invalid.
-    // We don't fail the test here explicitly; it's just a helpful assertion in debugging.
-    await expect(page.locator("text=Sign in").first())
-      .toHaveCount(0)
-      .catch(() => {});
   });
 
   test("should not issue an empty invoice", async ({ page }) => {
