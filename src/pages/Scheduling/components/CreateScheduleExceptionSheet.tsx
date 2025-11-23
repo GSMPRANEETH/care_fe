@@ -345,7 +345,11 @@ export default function CreateScheduleExceptionSheet({
                       {t("cancel")}
                     </Button>
                   </SheetClose>
-                  <Button variant="primary" type="submit" disabled={isPending}>
+                  <Button
+                    variant="primary"
+                    type="submit"
+                    disabled={isPending || !form.formState.isDirty}
+                  >
                     {t("confirm_unavailability")}
                   </Button>
                 </SheetFooter>
