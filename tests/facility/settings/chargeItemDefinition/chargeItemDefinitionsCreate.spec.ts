@@ -40,6 +40,9 @@ test.describe("Charge Item Definition Creation", () => {
 
   test("validate required fields", async ({ page }) => {
     await page.getByRole("button", { name: /add definition/i }).click();
+    await page
+      .getByRole("textbox", { name: "description" })
+      .fill("To make the form dirty");
     await page.getByRole("button", { name: /create/i }).click();
 
     // Title required

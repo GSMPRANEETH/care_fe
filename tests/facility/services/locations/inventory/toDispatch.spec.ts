@@ -94,6 +94,9 @@ test.describe("Facility To-Dispatch Orders Inventory Flow", () => {
     await expect(tableRow1).toContainText("Paracetamol");
     await expect(tableRow1).toContainText("5");
     await page.getByRole("link", { name: "Create Delivery Order" }).click();
+    await page
+      .getByRole("textbox", { name: "Note" })
+      .fill("To make the form dirty");
     await page.getByRole("button", { name: "Create" }).click();
     await page.getByRole("button", { name: "Load from order" }).click();
     await page.getByRole("button", { name: "Done" }).click();
@@ -115,6 +118,9 @@ test.describe("Facility To-Dispatch Orders Inventory Flow", () => {
     await expect(tableRow1).toContainText("Paracetamol");
     await expect(tableRow1).toContainText("5");
     await page.getByRole("link", { name: "Create Delivery Order" }).click();
+    await page
+      .getByRole("textbox", { name: "Note" })
+      .fill("To make the form dirty");
     await page.getByRole("button", { name: "Create" }).click();
     await page.getByRole("button", { name: "Load from order" }).click();
     await page.getByRole("button", { name: "Done" }).click();

@@ -61,6 +61,7 @@ test.describe("Product Knowledge Creation", () => {
 
   test("validate the basic fields", async ({ page }) => {
     await page.getByRole("button", { name: /add product/i }).click();
+    await page.getByRole("textbox", { name: /hsn/i }).fill("s");
     await page.getByRole("button", { name: /create/i }).click();
 
     await expect(page.getByText(/name.*required/i)).toBeVisible();
@@ -79,7 +80,7 @@ test.describe("Product Knowledge Creation", () => {
     await expect(page.getByText(/slug.*required/i)).toBeVisible();
     await expect(page.getByText(/base unit.*required/i)).toBeVisible();
     await expect(page.getByText(/dosage form.*required/i)).toBeVisible();
-    await expect(page.getByText("name is required")).toBeVisible();
+    await expect(page.getByText("name is required").first()).toBeVisible();
     await expect(page.getByText(/note.*required/i)).toBeVisible();
     await expect(page.getByText(/duration value.*required/i)).toBeVisible();
   });
