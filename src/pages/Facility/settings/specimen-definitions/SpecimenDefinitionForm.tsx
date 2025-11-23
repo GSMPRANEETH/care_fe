@@ -163,6 +163,7 @@ export function SpecimenDefinitionForm({
       if (name === "title") {
         form.setValue("slug_value", generateSlug(value.title || "", 25), {
           shouldValidate: true,
+          shouldDirty: false,
         });
       }
     });

@@ -125,6 +125,13 @@ export default function DeviceForm({ facilityId, device, onSuccess }: Props) {
     manufacture_date: undefined,
     registered_name: "",
     contact: [],
+    expiration_date: undefined,
+    lot_number: undefined,
+    serial_number: undefined,
+    user_friendly_name: undefined,
+    model_number: undefined,
+    part_number: undefined,
+    metadata: {},
   };
 
   const form = useForm({
@@ -171,11 +178,11 @@ export default function DeviceForm({ facilityId, device, onSuccess }: Props) {
         serial_number: device.serial_number || undefined,
         model_number: device.model_number || undefined,
         part_number: device.part_number || undefined,
+        metadata: device.care_metadata || {},
         contact: Array.isArray(device.contact) ? device.contact : [],
       });
 
       setCareType(device.care_type);
-      form.setValue("metadata", device.care_metadata);
     } else {
       const pluginDevice = pluginDevices.find(
         (pluginDevice) => pluginDevice.type === qParams.type,

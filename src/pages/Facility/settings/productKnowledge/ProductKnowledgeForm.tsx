@@ -217,14 +217,17 @@ function ProductKnowledgeFormContent({
     }
 
     return {
+      name: "",
+      slug_value: "",
       product_type: ProductKnowledgeType.medication,
+      alternate_identifier: "",
       names: [],
       storage_guidelines: [],
-      code: null,
+      code: undefined,
       base_unit: undefined,
-      definitional: null,
+      definitional: { intended_routes: [] },
       status: ProductKnowledgeStatus.active,
-      category: categorySlug,
+      category: categorySlug || "",
     };
   };
 
@@ -295,7 +298,6 @@ function ProductKnowledgeFormContent({
   );
 
   const isPending = isCreating || isUpdating;
-  const { isDirty } = form.formState;
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     // Convert null to undefined where needed to match API types
@@ -319,6 +321,10 @@ function ProductKnowledgeFormContent({
       createProductKnowledge(payload as ProductKnowledgeCreate);
     }
   }
+
+  React.useEffect(() => {
+    console.log("dirty fields: ", form.formState.dirtyFields);
+  });
 
   return (
     <Page
@@ -367,6 +373,7 @@ function ProductKnowledgeFormContent({
                                   "slug_value",
                                   generateSlug(e.target.value || "", 25),
                                   {
+                                    shouldDirty: false,
                                     shouldValidate: true,
                                   },
                                 );
@@ -1033,7 +1040,10 @@ function ProductKnowledgeFormContent({
                   {t("cancel")}
                 </Link>
               </Button>
-              <Button type="submit" disabled={isPending || !isDirty}>
+              <Button
+                type="submit"
+                disabled={isPending || !form.formState.isDirty}
+              >
                 {isPending ? (
                   t("saving")
                 ) : (

@@ -315,7 +315,10 @@ export function ResourceCategoryForm({
               <Button type="button" variant="outline" onClick={onClose}>
                 {t("cancel")}
               </Button>
-              <Button type="submit" disabled={isLoading}>
+              <Button
+                type="submit"
+                disabled={isLoading || !form.formState.isDirty}
+              >
                 {isLoading && (
                   <CareIcon
                     icon="l-spinner"

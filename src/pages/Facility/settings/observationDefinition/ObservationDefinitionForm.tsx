@@ -233,11 +233,18 @@ function ObservationDefinitionFormContent({
               })) || [],
           }
         : {
+            title: "",
+            slug_value: "",
+            description: "",
             status: "active",
-            component: [],
+            category: "vital-signs",
+            permitted_data_type: QuestionType.quantity,
+            code: { code: "", display: "", system: "" },
             body_site: null,
             method: null,
             permitted_unit: null,
+            component: [],
+            qualified_ranges: [],
           },
   });
 
@@ -259,6 +266,7 @@ function ObservationDefinitionFormContent({
     const subscription = form.watch((value, { name }) => {
       if (name === "title") {
         form.setValue("slug_value", generateSlug(value.title || "", 25), {
+          shouldDirty: false,
           shouldValidate: true,
         });
       }

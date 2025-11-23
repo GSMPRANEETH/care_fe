@@ -313,15 +313,22 @@ function ActivityDefinitionFormContent({
             category: existingData.category?.slug || "",
           }
         : {
+            title: "",
+            slug_value: "",
+            description: "",
+            usage: "",
+            derived_from_uri: null,
+            classification: Classification.counselling,
+            code: { code: "", display: "", system: "" },
             status: Status.active,
             kind: Kind.service_request,
             specimen_requirements: [],
             observation_result_requirements: [],
             locations: [],
-            derived_from_uri: null,
             body_site: null,
             diagnostic_report_codes: [],
             healthcare_service: null,
+            charge_item_definitions: [],
             category: categorySlug || "",
           },
   });

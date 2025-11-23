@@ -155,6 +155,7 @@ function HealthcareServiceFormContent({
             name: "",
             styling_metadata: { careIcon: undefined },
             extra_details: "",
+            internal_type: undefined,
             locations: [],
             managing_organization: null,
           },
