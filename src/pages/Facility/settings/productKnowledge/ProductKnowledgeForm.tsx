@@ -224,6 +224,7 @@ function ProductKnowledgeFormContent({
       base_unit: undefined,
       definitional: null,
       status: ProductKnowledgeStatus.active,
+      category: categorySlug,
     };
   };
 
