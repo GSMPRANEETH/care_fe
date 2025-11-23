@@ -217,17 +217,13 @@ function ProductKnowledgeFormContent({
     }
 
     return {
-      name: "",
-      slug_value: "",
       product_type: ProductKnowledgeType.medication,
-      alternate_identifier: "",
       names: [],
       storage_guidelines: [],
       code: null,
       base_unit: undefined,
       definitional: null,
       status: ProductKnowledgeStatus.active,
-      category: categorySlug || "",
     };
   };
 

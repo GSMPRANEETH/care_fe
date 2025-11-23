@@ -244,7 +244,6 @@ function ObservationDefinitionFormContent({
             method: null,
             permitted_unit: null,
             component: [],
-            qualified_ranges: [],
           },
   });
 

@@ -151,24 +151,7 @@ export function SpecimenDefinitionForm({
     },
   });
 
-  React.useEffect(() => {
-    form.reset({
-      title: initialData?.title ?? "",
-      slug_value: initialData?.slug_config?.slug_value ?? "",
-      status: initialData?.status ?? SpecimenDefinitionStatus.active,
-      description: initialData?.description ?? "",
-      derived_from_uri: initialData?.derived_from_uri ?? undefined,
-      type_collected: initialData?.type_collected ?? undefined,
-      patient_preparation: initialData?.patient_preparation ?? [],
-      collection: initialData?.collection ?? undefined,
-      type_tested: initialData?.type_tested ?? {
-        is_derived: false,
-        preference: Preference.preferred,
-        container: {},
-        single_use: false,
-      },
-    });
-  }, [form, initialData]);
+  // s
 
   const { fields, append, remove, update } = useFieldArray({
     control: form.control,
@@ -176,13 +159,13 @@ export function SpecimenDefinitionForm({
   });
 
   React.useEffect(() => {
+    form.reset();
     if (initialData) return;
 
     const subscription = form.watch((value, { name }) => {
       if (name === "title") {
         form.setValue("slug_value", generateSlug(value.title || "", 25), {
           shouldValidate: true,
-          shouldDirty: false,
         });
       }
     });

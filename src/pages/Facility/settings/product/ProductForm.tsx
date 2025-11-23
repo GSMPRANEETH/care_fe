@@ -70,8 +70,8 @@ const formSchema = z.object({
     .object({
       lot_number: z.string().optional(),
     })
-    .required(),
-  expiration_date: z.date(),
+    .optional(),
+  expiration_date: z.date().optional(),
 });
 
 export default function ProductForm({
@@ -229,6 +229,11 @@ export function ProductFormContent({
         : {
             status: ProductStatusOptions.active,
             product_knowledge: slug,
+            charge_item_definition: undefined,
+            batch: {
+              lot_number: "",
+            },
+            expiration_date: undefined,
           },
   });
 
