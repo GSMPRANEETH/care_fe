@@ -266,7 +266,6 @@ function ObservationDefinitionFormContent({
     const subscription = form.watch((value, { name }) => {
       if (name === "title") {
         form.setValue("slug_value", generateSlug(value.title || "", 25), {
-          shouldDirty: false,
           shouldValidate: true,
         });
       }

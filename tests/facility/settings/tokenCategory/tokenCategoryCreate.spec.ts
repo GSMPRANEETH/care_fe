@@ -115,7 +115,7 @@ test.describe("Token Category Create - Permission Tests", () => {
         /\/facility\/[^/]+\/settings\/token_category\/new/,
       );
 
-      // Click Create button after making for dirty but invalid
+      // Click Create button after making form dirty but invalid
       await page.getByRole("textbox", { name: "Name" }).fill(" ");
       await page.getByRole("button", { name: "Create" }).click();
 

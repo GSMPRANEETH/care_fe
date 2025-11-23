@@ -239,15 +239,8 @@ function ProductKnowledgeFormContent({
   });
 
   React.useEffect(() => {
-    form.reset(() => getDefaultValues());
-  }, [form, existingData]);
-
-  React.useEffect(() => {
-    if (isEditMode && existingData) {
-      form.reset(getDefaultValues());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [existingData?.slug, isEditMode]);
+    form.reset(getDefaultValues());
+  }, [existingData]);
 
   const namesArray = useFieldArray({
     control: form.control,
@@ -373,7 +366,6 @@ function ProductKnowledgeFormContent({
                                   "slug_value",
                                   generateSlug(e.target.value || "", 25),
                                   {
-                                    shouldDirty: false,
                                     shouldValidate: true,
                                   },
                                 );
