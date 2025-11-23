@@ -223,9 +223,9 @@ function ProductKnowledgeFormContent({
       alternate_identifier: "",
       names: [],
       storage_guidelines: [],
-      code: undefined,
+      code: null,
       base_unit: undefined,
-      definitional: { intended_routes: [] },
+      definitional: null,
       status: ProductKnowledgeStatus.active,
       category: categorySlug || "",
     };
@@ -237,6 +237,10 @@ function ProductKnowledgeFormContent({
     mode: "onChange",
     reValidateMode: "onChange",
   });
+
+  React.useEffect(() => {
+    form.reset(() => getDefaultValues());
+  }, [form, existingData]);
 
   React.useEffect(() => {
     if (isEditMode && existingData) {
@@ -321,10 +325,6 @@ function ProductKnowledgeFormContent({
       createProductKnowledge(payload as ProductKnowledgeCreate);
     }
   }
-
-  React.useEffect(() => {
-    console.log("dirty fields: ", form.formState.dirtyFields);
-  });
 
   return (
     <Page
