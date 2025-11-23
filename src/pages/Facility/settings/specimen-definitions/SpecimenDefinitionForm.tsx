@@ -151,8 +151,6 @@ export function SpecimenDefinitionForm({
     },
   });
 
-  // s
-
   const { fields, append, remove, update } = useFieldArray({
     control: form.control,
     name: "patient_preparation",
