@@ -6,6 +6,14 @@ import { Trans, useTranslation } from "react-i18next";
 import CareIcon from "@/CAREUI/icons/CareIcon";
 
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -15,10 +23,19 @@ import Loading from "@/components/Common/Loading";
 import mutate from "@/Utils/request/mutate";
 import query from "@/Utils/request/query";
 import plugConfigApi from "@/types/plugConfig/plugConfigApi";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 interface Props {
   slug: string;
+  meta?: string;
 }
+
+const formSchema = z.object({
+  slug: z.string().min(1, "Slug is required"),
+  meta: z.string().min(2, "Meta JSON is required"),
+});
 
 export function PlugConfigEdit({ slug }: Props) {
   const navigate = useNavigate();
@@ -32,14 +49,17 @@ export function PlugConfigEdit({ slug }: Props) {
     enabled: !isNew,
   });
 
-  const [config, setConfig] = useState({
-    slug: "",
-    meta: `{}`,
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      slug: "",
+      meta: "{}",
+    },
   });
 
   useEffect(() => {
     if (existingConfig) {
-      setConfig({
+      form.reset({
         slug: existingConfig.slug,
         meta: JSON.stringify(existingConfig.meta, null, 2),
       });
@@ -60,10 +80,9 @@ export function PlugConfigEdit({ slug }: Props) {
     onSuccess: () => navigate("/admin/apps"),
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const meta = JSON.parse(config.meta);
-    const configPayload = { ...config, meta };
+  const handleSubmit = async (data: Props) => {
+    const meta = data.meta ? JSON.parse(data.meta) : {};
+    const configPayload = { ...data, meta };
     upsertConfig(configPayload);
   };
 
@@ -91,41 +110,51 @@ export function PlugConfigEdit({ slug }: Props) {
           </Button>
         )}
       </div>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="mb-1 block text-sm font-medium">{t("slug")}</label>
-          <Input
-            value={config.slug}
-            onChange={(e) =>
-              setConfig((prev) => ({ ...prev, slug: e.target.value }))
-            }
-            required
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="slug"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("slug")}</FormLabel>
+                <FormControl>
+                  <Input {...field} value={field.value} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium">
-            {t("meta_json")}
-          </label>
-          <Textarea
-            value={config.meta}
-            onChange={(e) =>
-              setConfig((prev) => ({ ...prev, meta: e.target.value }))
-            }
-            rows={10}
+          <FormField
+            control={form.control}
+            name="meta"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("meta_json")}</FormLabel>
+                <FormControl>
+                  <Textarea {...field} rows={10} value={field.value} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
-        <div className="flex gap-2">
-          <Button type="submit">{t("save")}</Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => navigate("/admin/apps")}
-          >
-            {t("cancel")}
-          </Button>
-        </div>
-      </form>
+          <div className="flex gap-2">
+            <Button
+              type="submit"
+              disabled={isLoading || !form.formState.isDirty}
+            >
+              {t("save")}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate("/admin/apps")}
+            >
+              {t("cancel")}
+            </Button>
+          </div>
+        </form>
+      </Form>
       <ConfirmActionDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
@@ -133,7 +162,7 @@ export function PlugConfigEdit({ slug }: Props) {
         description={
           <Trans
             i18nKey="delete_config_description"
-            values={{ slug: config.slug }}
+            values={{ slug: form.watch("slug") }}
             components={{ strong: <strong /> }}
           />
         }
