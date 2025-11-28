@@ -33,7 +33,20 @@ interface Props {
 
 const formSchema = z.object({
   slug: z.string().min(1, "Slug is required"),
-  meta: z.string().min(2, "Meta JSON is required"),
+  meta: z
+    .string()
+    .min(2, "Meta JSON is required")
+    .refine(
+      (val) => {
+        try {
+          JSON.parse(val);
+          return true;
+        } catch {
+          return false;
+        }
+      },
+      { message: "Meta must be valid JSON" },
+    ),
 });
 
 export function PlugConfigEdit({ slug }: Props) {
@@ -118,7 +131,7 @@ export function PlugConfigEdit({ slug }: Props) {
               <FormItem>
                 <FormLabel>{t("slug")}</FormLabel>
                 <FormControl>
-                  <Input {...field} value={field.value} />
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -131,7 +144,7 @@ export function PlugConfigEdit({ slug }: Props) {
               <FormItem>
                 <FormLabel>{t("meta_json")}</FormLabel>
                 <FormControl>
-                  <Textarea {...field} rows={10} value={field.value} />
+                  <Textarea {...field} rows={10} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

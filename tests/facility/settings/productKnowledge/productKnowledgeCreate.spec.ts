@@ -82,7 +82,7 @@ test.describe("Product Knowledge Creation", () => {
     await expect(page.getByText(/slug.*required/i)).toBeVisible();
     await expect(page.getByText(/base unit.*required/i)).toBeVisible();
     await expect(page.getByText(/dosage form.*required/i)).toBeVisible();
-    await expect(page.getByText("name is required").first()).toBeVisible();
+    await expect(page.getByText("name is required")).toBeVisible();
     await expect(page.getByText(/note.*required/i)).toBeVisible();
     await expect(page.getByText(/duration value.*required/i)).toBeVisible();
   });
