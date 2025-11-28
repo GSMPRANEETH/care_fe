@@ -61,7 +61,9 @@ test.describe("Product Knowledge Creation", () => {
 
   test("validate the basic fields", async ({ page }) => {
     await page.getByRole("button", { name: /add product/i }).click();
-    await page.getByRole("textbox", { name: /hsn/i }).fill("s");
+    await page
+      .getByRole("textbox", { name: /hsn/i })
+      .fill(faker.string.sample());
     await page.getByRole("button", { name: /create/i }).click();
 
     await expect(page.getByText(/name.*required/i)).toBeVisible();

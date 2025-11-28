@@ -237,13 +237,14 @@ function ObservationDefinitionFormContent({
             slug_value: "",
             description: "",
             status: "active",
-            category: "vital-signs",
+            category: undefined,
             permitted_data_type: QuestionType.quantity,
-            code: { code: "", display: "", system: "" },
+            code: undefined,
             body_site: null,
             method: null,
             permitted_unit: null,
             component: [],
+            qualified_ranges: [],
           },
   });
 

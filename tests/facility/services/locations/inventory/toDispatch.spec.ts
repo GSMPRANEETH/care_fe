@@ -96,7 +96,7 @@ test.describe("Facility To-Dispatch Orders Inventory Flow", () => {
     await page.getByRole("link", { name: "Create Delivery Order" }).click();
     await page
       .getByRole("textbox", { name: "Note" })
-      .fill("To make the form dirty");
+      .fill(faker.string.sample());
     await page.getByRole("button", { name: "Create" }).click();
     await page.getByRole("button", { name: "Load from order" }).click();
     await page.getByRole("button", { name: "Done" }).click();
@@ -120,7 +120,7 @@ test.describe("Facility To-Dispatch Orders Inventory Flow", () => {
     await page.getByRole("link", { name: "Create Delivery Order" }).click();
     await page
       .getByRole("textbox", { name: "Note" })
-      .fill("To make the form dirty");
+      .fill(faker.string.sample());
     await page.getByRole("button", { name: "Create" }).click();
     await page.getByRole("button", { name: "Load from order" }).click();
     await page.getByRole("button", { name: "Done" }).click();

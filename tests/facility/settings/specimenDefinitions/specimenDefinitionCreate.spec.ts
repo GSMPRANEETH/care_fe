@@ -220,7 +220,9 @@ test.describe("Specimen Definitions Create", () => {
     await page.getByRole("button", { name: "Add Definition" }).click();
 
     // Click save without valid data
-    await page.getByRole("textbox", { name: /requirement/i }).fill(" ");
+    await page
+      .getByRole("textbox", { name: /requirement/i })
+      .fill(faker.string.sample());
     await page.getByRole("button", { name: /save/i }).click();
 
     await expect(

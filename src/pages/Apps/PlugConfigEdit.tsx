@@ -29,7 +29,6 @@ import { z } from "zod";
 
 interface Props {
   slug: string;
-  meta?: string;
 }
 
 const formSchema = z.object({
@@ -80,8 +79,8 @@ export function PlugConfigEdit({ slug }: Props) {
     onSuccess: () => navigate("/admin/apps"),
   });
 
-  const handleSubmit = async (data: Props) => {
-    const meta = data.meta ? JSON.parse(data.meta) : {};
+  const handleSubmit = async (data: z.infer<typeof formSchema>) => {
+    const meta = JSON.parse(data.meta);
     const configPayload = { ...data, meta };
     upsertConfig(configPayload);
   };
@@ -139,10 +138,7 @@ export function PlugConfigEdit({ slug }: Props) {
             )}
           />
           <div className="flex gap-2">
-            <Button
-              type="submit"
-              disabled={isLoading || !form.formState.isDirty}
-            >
+            <Button type="submit" disabled={!form.formState.isDirty}>
               {t("save")}
             </Button>
             <Button
