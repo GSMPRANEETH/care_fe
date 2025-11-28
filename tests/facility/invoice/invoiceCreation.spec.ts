@@ -1,3 +1,4 @@
+import { faker } from "@faker-js/faker";
 import { expect, test } from "@playwright/test";
 import { getFacilityId } from "tests/support/facilityId";
 test.use({ storageState: "tests/.auth/user.json" });
@@ -12,12 +13,17 @@ test.describe("Invoice Creation", () => {
 
     await page.goto(`/facility/${facilityId}/encounters/patients/all`);
     await page.getByRole("button", { name: "View Encounter" }).first().click();
-    await page.getByRole("button", { name: "Male" }).click();
-    await page.getByRole("link", { name: "View Profile" }).click();
-    await page.getByRole("tab", { name: "Accounts" }).click();
-    await page.getByRole("button", { name: "Create Account" }).click();
-    await page.getByLabel("Name").fill("Test Account");
-    await page.getByRole("button", { name: "Create" }).click();
+    await page
+      .locator("[data-slot='patient-info-hover-card-trigger']")
+      .last()
+      .click();
+    await page.getByRole("link", { name: /view profile/i }).click();
+    await page.getByRole("tab", { name: /accounts/i }).click();
+    await page.getByRole("button", { name: /create account/i }).click();
+    await page
+      .getByRole("textbox", { name: /name/i })
+      .fill(faker.word.words(1));
+    await page.getByRole("button", { name: /create/i }).click();
 
     await context.close();
   });
@@ -25,27 +31,61 @@ test.describe("Invoice Creation", () => {
     const facilityId = getFacilityId();
 
     await page.goto(`/facility/${facilityId}/billing/accounts`);
-    await page.getByRole("button", { name: "Go to account" }).first().click();
-    await page.getByRole("button", { name: "Invoice" }).click();
+    await page
+      .getByRole("button", { name: /go to account/i })
+      .first()
+      .click();
+    await page.waitForLoadState("networkidle", { timeout: 10000 });
+    await page.keyboard.press("i");
   });
 
   test("should not issue an empty invoice", async ({ page }) => {
-    await page.getByRole("button", { name: "Create Invoice" }).first().click();
+    await page.keyboard.press("Shift+Enter");
 
     await expect(
-      page.getByRole("button", { name: "Issue Invoice" }),
+      page
+        .locator("li[data-sonner-toast]")
+        .getByText(/invoice created successfully/i),
+    ).toBeVisible({ timeout: 10000 });
+
+    await expect(
+      page.getByRole("button", { name: /issue invoice/i }),
     ).toBeDisabled();
   });
 
   test("should issue a valid invoice", async ({ page }) => {
-    await page.getByRole("button", { name: "Add Charge Item" }).click();
-    await page.getByText("Select charge item definition").click();
-    await page.getByRole("option").first().click();
-    await page.getByRole("option").first().click();
-    await page.getByRole("button", { name: "Add Items" }).click();
-    await page.getByRole("button", { name: "Create Invoice" }).click();
-    await page.getByRole("button", { name: "Issue Invoice" }).click();
+    await page.keyboard.press("a");
+    await page.getByText(/select charge item definition/i).click();
+    await page.getByRole("option", { name: /tests/i }).first().click();
+    await page.getByRole("option", { name: /test/i }).first().click();
 
-    await expect(page.getByText("Issued")).toBeVisible();
+    await page.waitForLoadState("networkidle", { timeout: 10000 });
+    await page.keyboard.press("Enter");
+
+    await expect(
+      page
+        .locator("li[data-sonner-toast]")
+        .getByText(/charge items added successfully/i),
+    ).toBeVisible({ timeout: 10000 });
+
+    await page.waitForLoadState("networkidle", { timeout: 10000 });
+    await page.keyboard.press("Shift+Enter");
+
+    await expect(
+      page
+        .locator("li[data-sonner-toast]")
+        .getByText(/invoice created successfully/i),
+    ).toBeVisible({ timeout: 10000 });
+
+    await page.waitForLoadState("networkidle", { timeout: 10000 });
+    await page.keyboard.press("i");
+
+    await expect(
+      page
+        .locator("li[data-sonner-toast]")
+        .getByText(/invoice updated successfully/i),
+    ).toBeVisible({ timeout: 10000 });
+
+    await expect(page.getByText(/issued/i)).toBeVisible();
   });
 });
