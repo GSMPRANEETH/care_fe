@@ -319,7 +319,7 @@ function ActivityDefinitionFormContent({
             usage: "",
             derived_from_uri: null,
             classification: Classification.counselling,
-            code: { code: "", display: "", system: "" },
+            code: undefined,
             status: Status.active,
             kind: Kind.service_request,
             specimen_requirements: [],

@@ -231,7 +231,7 @@ export function ProductFormContent({
             product_knowledge: slug,
             charge_item_definition: undefined,
             batch: {
-              lot_number: "",
+              lot_number: undefined,
             },
             expiration_date: undefined,
           },

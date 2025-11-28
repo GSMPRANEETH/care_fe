@@ -238,7 +238,7 @@ function ObservationDefinitionFormContent({
             description: "",
             status: "active",
             category: undefined,
-            permitted_data_type: QuestionType.quantity,
+            permitted_data_type: undefined,
             code: undefined,
             body_site: null,
             method: null,
