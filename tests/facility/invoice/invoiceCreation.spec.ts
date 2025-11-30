@@ -38,6 +38,7 @@ test.describe("Invoice Creation", () => {
     await expect(page.getByText(accName)).toBeVisible({ timeout: 10000 });
 
     await page.close();
+    await context.close();
   });
   test.beforeEach(async ({ page }) => {
     const facilityId = getFacilityId();
@@ -48,78 +49,79 @@ test.describe("Invoice Creation", () => {
       .getByRole("button", { name: /go to account/i })
       .first()
       .click();
-
-    await expect(
-      page.getByRole("button", { name: /create invoice/i }),
-    ).toBeVisible({ timeout: 10000 });
-    await page.keyboard.press("i");
   });
 
-  test("should not issue an empty invoice", async ({ page }) => {
-    await page.keyboard.press("Shift+Enter");
-
-    await expect(
-      page
-        .locator("li[data-sonner-toast]")
-        .getByText(/invoice created successfully/i),
-    ).toBeVisible({ timeout: 10000 });
-
-    await expect(
-      page.getByRole("button", { name: /issue invoice/i }),
-    ).toBeDisabled();
-  });
-
-  test("should issue a valid invoice", async ({ page }) => {
-    await page.keyboard.press("a");
-
-    await page.getByText(/select charge item definition/i).click();
-
-    await page.getByRole("option", { name: /tests/i }).first().click();
-    await page.getByRole("option", { name: /test/i }).first().click();
-
-    await expect(
-      page.getByRole("button", { name: /add items/i }),
-    ).toBeEnabled();
-
-    await page.keyboard.press("Enter");
-
-    await expect(
-      page
-        .locator("li[data-sonner-toast]")
-        .getByText(/charge items added successfully/i),
-    ).toBeVisible({
-      timeout: 10000,
+  test("should create a draft invoice", async ({ page }) => {
+    await test.step("Attempt to issue invoice with no items", async () => {
+      await expect(
+        page.getByRole("button", { name: /create invoice/i }),
+      ).toBeVisible({ timeout: 10000 });
+      await page.keyboard.press("i");
+      await page.keyboard.press("Shift+Enter");
     });
-
-    await expect(
-      page.getByRole("button", { name: /create invoice/i }),
-    ).toBeEnabled();
-
-    await page.keyboard.press("Shift+Enter");
-
-    await expect(
-      page
-        .locator("li[data-sonner-toast]")
-        .getByText(/invoice created successfully/i),
-    ).toBeVisible({ timeout: 10000 });
-
-    await expect(
-      page.getByRole("button", { name: /issue invoice/i }),
-    ).toBeEnabled();
-
-    await page.keyboard.press("i");
-
-    await expect(
-      page
-        .locator("li[data-sonner-toast]")
-        .getByText(/invoice updated successfully/i),
-    ).toBeVisible({ timeout: 10000 });
-
-    await expect(page.getByText(/issued/i)).toBeVisible();
+    await test.step("Verify invoice created toast appears", async () => {
+      await expect(
+        page
+          .locator("li[data-sonner-toast]")
+          .getByText(/invoice created successfully/i),
+      ).toBeVisible({ timeout: 10000 });
+    });
+    await test.step("Verify status is draft and 'issue invoice' button is disabled", async () => {
+      await expect(page.getByText(/invoice: draft/i)).toBeVisible();
+      await expect(
+        page.getByRole("button", { name: /issue invoice/i }),
+      ).toBeDisabled();
+    });
+  });
+  test("should add charge items and issue invoice", async ({ page }) => {
+    await page.getByRole("link", { name: /see invoice/i }).click();
+    await test.step("Add charge items to invoice", async () => {
+      await expect(
+        page.getByRole("button", { name: /add charge item/i }),
+      ).toBeVisible();
+      await page.keyboard.press("a");
+      await expect(
+        page.getByRole("button", { name: /other charge items/i }),
+      ).toBeVisible();
+      await page.keyboard.press("o");
+      await page.getByRole("combobox").click();
+      await page.getByRole("option", { name: /tests/i }).first().click();
+      await page.getByRole("option", { name: /test/i }).first().click();
+      await expect(
+        page.getByRole("button", { name: /add items/i }),
+      ).toBeEnabled();
+      await page.keyboard.press("Enter");
+      await expect(
+        page
+          .locator("li[data-sonner-toast]")
+          .getByText(/charge items added successfully/i),
+      ).toBeVisible({
+        timeout: 10000,
+      });
+      await expect(
+        await page.getByRole("button", { name: /add selected items/i }),
+      ).toBeEnabled();
+      await page.keyboard.press("Shift+Enter");
+    });
+    await test.step("Issue invoice", async () => {
+      await expect(
+        page.getByRole("button", { name: /issue invoice/i }),
+      ).toBeEnabled();
+      await page.keyboard.press("i");
+      await expect(
+        page
+          .locator("li[data-sonner-toast]")
+          .getByText(/invoice updated successfully/i),
+      ).toBeVisible({ timeout: 10000 });
+      await expect(page.getByText(/invoice: issued/i)).toBeVisible();
+    });
   });
 
   test.afterAll(async ({ browser }) => {
-    const page = await browser.newPage();
+    const context = await browser.newContext({
+      storageState: "tests/.auth/user.json",
+    });
+    const page = await context.newPage();
     const facilityId = getFacilityId();
 
     await page.goto(`/facility/${facilityId}/encounters/patients/all`);
@@ -156,5 +158,6 @@ test.describe("Invoice Creation", () => {
     ).toBeVisible({ timeout: 10000 });
 
     await page.close();
+    await context.close();
   });
 });
