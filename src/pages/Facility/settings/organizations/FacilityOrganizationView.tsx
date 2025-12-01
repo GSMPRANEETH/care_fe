@@ -137,7 +137,7 @@ function OrganizationCard({
                 </TooltipProvider>
               )}
             </div>
-            {!org.has_children && org.org_type !== "root" && (
+            {canWrite && !org.has_children && org.org_type !== "root" && (
               <DeleteOrgDialog org={org} facilityId={facilityId} />
             )}
           </div>
@@ -350,7 +350,7 @@ export default function FacilityOrganizationView({
                     key={org.id}
                     org={org}
                     facilityId={facilityId}
-                    canWrite={canManageFacilityOrganization}
+                    canWrite={canManageFacilityOrganization || isGeoAdmin}
                     parentId={id}
                   />
                 ))}
