@@ -149,9 +149,9 @@ export function ProductFormContent({
   containerClassName,
   onSuccess = () => navigate(`/facility/${facilityId}/settings/product`),
   onCancel = () =>
-    productId
-      ? navigate(`/facility/${facilityId}/settings/product/${productId}`)
-      : navigate(`/facility/${facilityId}/settings/product`),
+    navigate(
+      `/facility/${facilityId}/settings/product${productId ? `/${productId}` : ""}`,
+    ),
   disableButtons = false,
   enabled = true,
   ref,

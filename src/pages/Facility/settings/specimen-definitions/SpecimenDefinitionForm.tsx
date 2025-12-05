@@ -747,13 +747,9 @@ export function SpecimenDefinitionForm({
             type="button"
             variant="outline"
             onClick={() =>
-              slug
-                ? navigate(
-                    `/facility/${facilityId}/settings/specimen_definitions/${slug}`,
-                  )
-                : navigate(
-                    `/facility/${facilityId}/settings/specimen_definitions`,
-                  )
+              navigate(
+                `/facility/${facilityId}/settings/specimen_definitions${slug ? `/${slug}` : ""}`,
+              )
             }
           >
             {t("cancel")}

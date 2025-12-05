@@ -116,11 +116,9 @@ export function TokenCategoryFormContent({
   containerClassName,
   onSuccess = () => navigate(`/facility/${facilityId}/settings/token_category`),
   onCancel = () =>
-    tokenCategoryId
-      ? navigate(
-          `/facility/${facilityId}/settings/token_category/${tokenCategoryId}`,
-        )
-      : navigate(`/facility/${facilityId}/settings/token_category`),
+    navigate(
+      `/facility/${facilityId}/settings/token_category${tokenCategoryId ? `/${tokenCategoryId}` : ""}`,
+    ),
   disableButtons = false,
   externalSubmitRef,
 }: {
