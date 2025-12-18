@@ -19,8 +19,8 @@ test.describe("Manage departments/teams association to an encounter", () => {
   });
 
   async function openDepartmentsDialog(page: Page) {
-    await page.getByRole("tab", { name: "Actions" }).click();
-    await page.getByRole("button", { name: "Update Department" }).click();
+    await page.getByRole("tab", { name: /actions/i }).click();
+    await page.getByRole("button", { name: /update department/i }).click();
   }
 
   async function deleteOrganization(page: Page) {
@@ -35,12 +35,12 @@ test.describe("Manage departments/teams association to an encounter", () => {
     await expect(
       page
         .locator("li[data-sonner-toast]")
-        .getByText("Organization removed successfully"),
+        .getByText(/organization removed successfully/i),
     ).toBeVisible({ timeout: 10000 });
   }
 
   async function selectAllOrganizationsTab(page: Page) {
-    await page.getByRole("tab", { name: "All Organizations" }).click();
+    await page.getByRole("tab", { name: /all organizations/i }).click();
     await page.getByRole("combobox").click();
   }
 
@@ -54,16 +54,35 @@ test.describe("Manage departments/teams association to an encounter", () => {
   }
 
   async function submitAddOrganization(page: Page) {
-    await page.getByRole("button", { name: "Add Organizations" }).click();
+    await page.getByRole("button", { name: /add organizations/i }).click();
   }
 
   async function verifyOrganizationAdded(page: Page) {
     await expect(
       page
         .locator("li[data-sonner-toast]")
-        .getByText("Organization added successfully"),
+        .getByText(/organization added successfully/i),
     ).toBeVisible({ timeout: 10000 });
   }
+
+  test("Add Organization button should be disabled when no department selected", async ({
+    page,
+  }) => {
+    await selectAllOrganizationsTab(page);
+    const addButton = page.getByRole("button", { name: /add organizations/i });
+    await expect(addButton).toBeDisabled();
+  });
+
+  test("Add Organization button should be enabled when department is selected", async ({
+    page,
+  }) => {
+    await selectAllOrganizationsTab(page);
+    const addButton = page.getByRole("button", { name: /add organizations/i });
+    await expect(addButton).toBeDisabled();
+
+    await selectDepartment(page);
+    await expect(addButton).toBeEnabled();
+  });
 
   test("Delete organization from encounter", async ({ page }) => {
     // Delete the organization

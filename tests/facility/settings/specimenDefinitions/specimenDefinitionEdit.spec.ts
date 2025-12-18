@@ -40,6 +40,72 @@ test.describe("Specimen Definitions Edit", () => {
     await page.goto(targetUrl);
   });
 
+  test("should keep Save disabled on edit when no changes", async ({
+    page,
+  }) => {
+    // Create a minimal specimen definition to ensure an editable item exists
+    await page.getByRole("button", { name: /add definition/i }).click();
+    await page
+      .getByRole("textbox", { name: /title \*/i })
+      .fill(definitionTitle);
+    await page.getByRole("textbox", { name: /slug \*/i }).fill(definitionSlug);
+    await page
+      .getByRole("textbox", { name: /description \*/i })
+      .fill(definitionDescription);
+    await page.getByRole("combobox", { name: /status \*/i }).click();
+    await page.getByRole("option", { name: status }).click();
+    await page.getByRole("combobox", { name: /type collected \*/i }).click();
+    await page.getByRole("option", { name: typeCollected }).click();
+    await page.getByRole("button", { name: /save/i }).click();
+
+    // Filter by status and search for created item
+    await page.getByRole("combobox").filter({ hasText: "Status" }).click();
+    await page.getByRole("option", { name: status.toLowerCase() }).click();
+    await page
+      .getByRole("textbox", { name: /search definitions/i })
+      .fill(definitionTitle);
+
+    // Open edit page
+    await page.getByRole("link", { name: /edit/i }).first().click();
+
+    // Without changes, Save should be disabled
+    await expect(page.getByRole("button", { name: /save/i })).toBeDisabled();
+  });
+
+  test("should enable Save on edit when a field is modified", async ({
+    page,
+  }) => {
+    // Create a minimal specimen definition to ensure an editable item exists
+    await page.getByRole("button", { name: /add definition/i }).click();
+    await page
+      .getByRole("textbox", { name: /title \*/i })
+      .fill(definitionTitle);
+    await page.getByRole("textbox", { name: /slug \*/i }).fill(definitionSlug);
+    await page
+      .getByRole("textbox", { name: /description \*/i })
+      .fill(definitionDescription);
+    await page.getByRole("combobox", { name: /status \*/i }).click();
+    await page.getByRole("option", { name: status }).click();
+    await page.getByRole("combobox", { name: /type collected \*/i }).click();
+    await page.getByRole("option", { name: typeCollected }).click();
+    await page.getByRole("button", { name: /save/i }).click();
+
+    // Filter by status and search for created item
+    await page.getByRole("combobox").filter({ hasText: "Status" }).click();
+    await page.getByRole("option", { name: status.toLowerCase() }).click();
+    await page
+      .getByRole("textbox", { name: /search definitions/i })
+      .fill(definitionTitle);
+
+    // Open edit page and modify Title
+    await page.getByRole("link", { name: /edit/i }).first().click();
+    await page
+      .getByRole("textbox", { name: /title \*/i })
+      .fill(`${definitionTitle}-x`);
+
+    await expect(page.getByRole("button", { name: /save/i })).toBeEnabled();
+  });
+
   test("edit specimen definition and verify changes", async ({ page }) => {
     // Create a specimen definition with only required fields to edit it
     await page.getByRole("button", { name: "Add Definition" }).click();

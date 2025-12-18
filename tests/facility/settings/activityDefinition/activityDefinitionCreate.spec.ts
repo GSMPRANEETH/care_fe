@@ -17,6 +17,42 @@ test.beforeAll(() => {
 });
 
 test.describe("activity definition form", () => {
+  test("should have Create button disabled when form is empty", async ({
+    page,
+  }) => {
+    await page.goto(
+      `/facility/${facilityId}/settings/activity_definitions/categories/f-${facilityId}-${RESOURCE_CATEGORY_SLUG}/new`,
+    );
+
+    const createButton = page.getByRole("button", { name: "Create" });
+    await expect(createButton).toBeDisabled();
+  });
+
+  test("should enable Create button when required fields are filled", async ({
+    page,
+  }) => {
+    await page.goto(
+      `/facility/${facilityId}/settings/activity_definitions/categories/f-${facilityId}-${RESOURCE_CATEGORY_SLUG}/new`,
+    );
+
+    const createButton = page.getByRole("button", { name: "Create" });
+    await expect(createButton).toBeDisabled();
+
+    // Fill required fields
+    await page.getByRole("textbox", { name: "Title *" }).fill("Test Activity");
+    await page.getByRole("textbox", { name: "Slug *" }).fill("test-activity");
+    await page
+      .getByRole("textbox", { name: "Description *" })
+      .fill("Test description");
+    await page.getByRole("textbox", { name: "Usage *" }).fill("Test usage");
+    await page.getByRole("combobox", { name: "Category *" }).click();
+    await page.getByRole("option").first().click();
+    await page.getByRole("combobox", { name: "Code *" }).click();
+    await page.getByRole("option").first().click();
+
+    await expect(createButton).toBeEnabled();
+  });
+
   test("should show validation errors when trying to save without required fields", async ({
     page,
   }) => {

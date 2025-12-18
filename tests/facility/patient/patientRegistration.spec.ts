@@ -50,6 +50,30 @@ test.describe("Patient Registration", () => {
     await page.getByRole("link", { name: /search patients/i }).click();
   });
 
+  test("Register button disabled on empty form", async ({ page }) => {
+    await page
+      .getByRole("textbox", { name: /search by patient phone number/i })
+      .press("Shift+Enter");
+
+    await expect(
+      page.getByRole("button", { name: /register patient/i }),
+    ).toBeDisabled();
+  });
+
+  test("Register button enabled after touching required fields", async ({
+    page,
+  }) => {
+    await page
+      .getByRole("textbox", { name: /search by patient phone number/i })
+      .press("Shift+Enter");
+
+    await page.getByRole("textbox", { name: /name.*\*/i }).fill("Test Patient");
+
+    await expect(
+      page.getByRole("button", { name: /register patient/i }),
+    ).toBeEnabled();
+  });
+
   test("should successfully register a new patient with all required fields", async ({
     page,
   }) => {

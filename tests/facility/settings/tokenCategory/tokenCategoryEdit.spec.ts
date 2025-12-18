@@ -177,5 +177,77 @@ test.describe("Token Category Edit - Permission Tests", () => {
         await expect(setAsDefaultButton).toBeVisible();
       }
     });
+
+    test("Save button should be disabled when no changes are made in edit form", async ({
+      page,
+    }) => {
+      await page.goto(`/facility/${facilityId}/settings/token_category/new`);
+      tokenCategoryName = faker.company.name();
+
+      await page.getByRole("textbox", { name: "Name" }).fill(tokenCategoryName);
+      await page.getByRole("combobox", { name: "Resource Type" }).click();
+      await page.getByRole("option").first().click();
+      await page
+        .getByRole("textbox", { name: "Shorthand" })
+        .fill(faker.string.alphanumeric(5).toUpperCase());
+      await page.getByRole("button", { name: "Create" }).click();
+
+      await page.waitForURL(
+        /\/facility\/[^/]+\/settings\/token_category(?!\/)/,
+      );
+
+      const viewButton = page.getByRole("link", { name: "View" }).first();
+      await viewButton.click();
+
+      const editButton = page.getByRole("link", { name: "Edit" });
+      await expect(editButton).toBeVisible({ timeout: 10000 });
+      await editButton.click();
+
+      await expect(
+        page.getByRole("heading", { name: /edit token category/i }),
+      ).toBeVisible();
+
+      const saveButton = page.getByRole("button", { name: /save/i });
+      await expect(saveButton).toBeDisabled();
+    });
+
+    test("Save button should be enabled when form is modified in edit form", async ({
+      page,
+    }) => {
+      await page.goto(`/facility/${facilityId}/settings/token_category/new`);
+      tokenCategoryName = faker.company.name();
+
+      await page.getByRole("textbox", { name: "Name" }).fill(tokenCategoryName);
+      await page.getByRole("combobox", { name: "Resource Type" }).click();
+      await page.getByRole("option").first().click();
+      await page
+        .getByRole("textbox", { name: "Shorthand" })
+        .fill(faker.string.alphanumeric(5).toUpperCase());
+      await page.getByRole("button", { name: "Create" }).click();
+
+      await page.waitForURL(
+        /\/facility\/[^/]+\/settings\/token_category(?!\/)/,
+      );
+
+      const viewButton = page.getByRole("link", { name: "View" }).first();
+      await viewButton.click();
+
+      const editButton = page.getByRole("link", { name: "Edit" });
+      await expect(editButton).toBeVisible({ timeout: 10000 });
+      await editButton.click();
+
+      await expect(
+        page.getByRole("heading", { name: /edit token category/i }),
+      ).toBeVisible();
+
+      const saveButton = page.getByRole("button", { name: /save/i });
+      await expect(saveButton).toBeDisabled();
+
+      await page
+        .getByRole("textbox", { name: "Name" })
+        .fill(faker.company.name());
+
+      await expect(saveButton).toBeEnabled();
+    });
   });
 });

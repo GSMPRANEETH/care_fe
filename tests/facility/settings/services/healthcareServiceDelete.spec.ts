@@ -14,6 +14,64 @@ test.describe("Healthcare Services Management - Delete", () => {
     await page.goto(`/facility/${facilityId}/settings/healthcare_services`);
   });
 
+  test("Create: should keep Create disabled when form is empty", async ({
+    page,
+  }) => {
+    await page.getByRole("button", { name: /add healthcare service/i }).click();
+
+    await expect(page.getByRole("button", { name: /create/i })).toBeDisabled();
+  });
+
+  test("Create: should enable Create when any field is modified", async ({
+    page,
+  }) => {
+    await page.getByRole("button", { name: /add healthcare service/i }).click();
+
+    await page
+      .getByRole("textbox", { name: /name/i })
+      .fill(faker.commerce.productName());
+
+    await expect(page.getByRole("button", { name: /create/i })).toBeEnabled();
+  });
+
+  test("Edit: should keep Save disabled when no changes", async ({ page }) => {
+    const serviceName = faker.commerce.productName();
+    await page.getByRole("button", { name: /add healthcare service/i }).click();
+    await page.getByRole("textbox", { name: /name/i }).fill(serviceName);
+    await page
+      .getByRole("combobox")
+      .filter({ hasText: /select locations/i })
+      .click();
+    const plusButton = page.locator("button:has(svg.lucide-plus)").first();
+    await plusButton.click();
+    await page.getByRole("button", { name: /create/i }).click();
+
+    await page.getByRole("link", { name: serviceName }).click();
+    await page.getByRole("button", { name: /edit/i }).click();
+
+    await expect(page.getByRole("button", { name: /save/i })).toBeDisabled();
+  });
+
+  test("Edit: should enable Save when form is modified", async ({ page }) => {
+    const serviceName = faker.commerce.productName();
+    await page.getByRole("button", { name: /add healthcare service/i }).click();
+    await page.getByRole("textbox", { name: /name/i }).fill(serviceName);
+    await page
+      .getByRole("combobox")
+      .filter({ hasText: /select locations/i })
+      .click();
+    const plusButton = page.locator("button:has(svg.lucide-plus)").first();
+    await plusButton.click();
+    await page.getByRole("button", { name: /create/i }).click();
+
+    await page.getByRole("link", { name: serviceName }).click();
+    await page.getByRole("button", { name: /edit/i }).click();
+
+    await page.getByRole("textbox", { name: /name/i }).fill(serviceName + " X");
+
+    await expect(page.getByRole("button", { name: /save/i })).toBeEnabled();
+  });
+
   test("Delete an existing healthcare service", async ({ page }) => {
     const serviceName = faker.commerce.productName();
     await page.getByRole("button", { name: "Add Healthcare Service" }).click();

@@ -255,4 +255,40 @@ test.describe("activity definition edit", () => {
       ),
     ).toBeVisible();
   });
+
+  test("Save button should be disabled when no changes are made", async ({
+    page,
+  }) => {
+    const createdAD = await createActivityDefinition(page, facilityId);
+    await page.goto(
+      `/facility/${facilityId}/settings/activity_definitions/f-${facilityId}-${createdAD.slug}/edit`,
+    );
+
+    await expect(
+      page.getByRole("heading", { name: /edit activity definition/i }),
+    ).toBeVisible();
+
+    const saveButton = page.getByRole("button", { name: /save/i });
+    await expect(saveButton).toBeDisabled();
+  });
+
+  test("Save button should be enabled when form is modified", async ({
+    page,
+  }) => {
+    const createdAD = await createActivityDefinition(page, facilityId);
+    await page.goto(
+      `/facility/${facilityId}/settings/activity_definitions/f-${facilityId}-${createdAD.slug}/edit`,
+    );
+
+    await expect(
+      page.getByRole("heading", { name: /edit activity definition/i }),
+    ).toBeVisible();
+
+    const saveButton = page.getByRole("button", { name: /save/i });
+    await expect(saveButton).toBeDisabled();
+
+    await page.getByLabel(/title.*\*/i).fill("Updated Title");
+
+    await expect(saveButton).toBeEnabled();
+  });
 });

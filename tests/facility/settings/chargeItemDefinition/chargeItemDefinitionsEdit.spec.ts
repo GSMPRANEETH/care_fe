@@ -35,6 +35,30 @@ test.describe("Charge Item Definition Edit operations", () => {
     await page.getByRole("heading", { name: categoryName }).click();
   });
 
+  test("Save button should be disabled when no changes are made", async ({
+    page,
+  }) => {
+    await page.getByRole("link", { name: "Edit" }).first().click();
+
+    const updateButton = page.getByRole("button", { name: /update/i });
+    await expect(updateButton).toBeDisabled();
+  });
+
+  test("Save button should be enabled when form is modified", async ({
+    page,
+  }) => {
+    await page.getByRole("link", { name: "Edit" }).first().click();
+
+    const updateButton = page.getByRole("button", { name: /update/i });
+    await expect(updateButton).toBeDisabled();
+
+    await page
+      .getByRole("textbox", { name: /title/i })
+      .fill(title + " - modified");
+
+    await expect(updateButton).toBeEnabled();
+  });
+
   test("edit charge item definition", async ({ page }) => {
     await page.getByRole("link", { name: "Edit" }).first().click();
     await page

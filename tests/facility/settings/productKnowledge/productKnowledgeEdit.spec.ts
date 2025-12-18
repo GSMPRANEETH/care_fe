@@ -111,4 +111,31 @@ test.describe("Product Knowledge Edit operations", () => {
     await expect(page.getByText(altNames)).toBeVisible();
     await expect(page.getByText(storageGuidelines)).toBeVisible();
   });
+
+  test("Save button should be disabled when no changes are made", async ({
+    page,
+  }) => {
+    await page.getByRole("link", { name: "View" }).first().click();
+    await page.getByRole("button", { name: "Edit" }).click();
+
+    const updateButton = page.getByRole("button", { name: /update/i });
+    await expect(updateButton).toBeDisabled();
+  });
+
+  test("Save button should be enabled when form is modified", async ({
+    page,
+  }) => {
+    await page.getByRole("link", { name: "View" }).first().click();
+    await page.getByRole("button", { name: "Edit" }).click();
+
+    const updateButton = page.getByRole("button", { name: /update/i });
+    await expect(updateButton).toBeDisabled();
+
+    await page
+      .getByRole("textbox", { name: /name/i })
+      .first()
+      .fill(faker.commerce.productName());
+
+    await expect(updateButton).toBeEnabled();
+  });
 });

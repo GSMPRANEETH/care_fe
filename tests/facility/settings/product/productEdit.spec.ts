@@ -11,24 +11,41 @@ test.describe("Product Edit", () => {
     await page.goto(`/facility/${facilityId}/settings/product`);
   });
 
+  test("should keep Update disabled when no changes", async ({ page }) => {
+    await page.getByRole("link", { name: /view/i }).first().click();
+    await page.getByRole("button", { name: /edit/i }).click();
+
+    await expect(page.getByRole("button", { name: /update/i })).toBeDisabled();
+  });
+
+  test("should enable Update when form is modified", async ({ page }) => {
+    await page.getByRole("link", { name: /view/i }).first().click();
+    await page.getByRole("button", { name: /edit/i }).click();
+
+    await page.getByLabel(/status/i).click();
+    await page.getByRole("option", { name: /inactive/i }).click();
+
+    await expect(page.getByRole("button", { name: /update/i })).toBeEnabled();
+  });
+
   test("should update product status and revert", async ({ page }) => {
-    await page.getByRole("link", { name: "View" }).first().click();
+    await page.getByRole("link", { name: /view/i }).first().click();
 
-    await page.getByRole("button", { name: "Edit" }).click();
+    await page.getByRole("button", { name: /edit/i }).click();
 
-    await page.getByLabel("Status").click();
-    await page.getByRole("option", { name: "Inactive" }).click();
-    await page.getByRole("button", { name: "Update" }).click();
+    await page.getByLabel(/status/i).click();
+    await page.getByRole("option", { name: /inactive/i }).click();
+    await page.getByRole("button", { name: /update/i }).click();
 
     await expect(page).toHaveURL(/\/settings\/product\/[0-9a-fA-F-]{36}$/);
 
     await expect(page.getByText("Back to list")).toBeVisible();
 
     // Revert status to active as part of cleanup
-    await page.getByRole("button", { name: "Edit" }).click();
-    await page.getByLabel("Status").click();
-    await page.getByRole("option", { name: "Active", exact: true }).click();
-    await page.getByRole("button", { name: "Update" }).click();
+    await page.getByRole("button", { name: /edit/i }).click();
+    await page.getByLabel(/status/i).click();
+    await page.getByRole("option", { name: /active/i, exact: true }).click();
+    await page.getByRole("button", { name: /update/i }).click();
 
     await expect(page.getByText("Product updated successfully")).toBeVisible();
   });

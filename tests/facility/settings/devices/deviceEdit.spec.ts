@@ -12,6 +12,36 @@ test.describe("Facility Device Edit", () => {
     await page.goto(`/facility/${facilityId}/settings/devices`);
   });
 
+  test("Save disabled when no changes on edit", async ({ page }) => {
+    const firstDeviceLink = page
+      .getByRole("link")
+      .filter({ has: page.locator('[data-slot="card"]') })
+      .first();
+    await expect(firstDeviceLink).toBeVisible({ timeout: 10000 });
+    await firstDeviceLink.click();
+
+    await page.getByRole("button", { name: /edit/i }).click();
+
+    await expect(page.getByRole("button", { name: /save/i })).toBeDisabled();
+  });
+
+  test("Save enabled after modifying any field", async ({ page }) => {
+    const firstDeviceLink = page
+      .getByRole("link")
+      .filter({ has: page.locator('[data-slot="card"]') })
+      .first();
+    await expect(firstDeviceLink).toBeVisible({ timeout: 10000 });
+    await firstDeviceLink.click();
+
+    await page.getByRole("button", { name: /edit/i }).click();
+
+    await page
+      .getByRole("textbox", { name: /user friendly name/i })
+      .fill(faker.word.words(2));
+
+    await expect(page.getByRole("button", { name: /save/i })).toBeEnabled();
+  });
+
   test("Edit first device in list and verify changes", async ({ page }) => {
     // Wait for device list to load by checking for at least one device card
     const firstDeviceLink = page

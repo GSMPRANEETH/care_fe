@@ -38,6 +38,30 @@ test.describe("Charge Item Definition Creation", () => {
     await page.getByRole("heading", { name: categoryName }).click();
   });
 
+  test("Create button should be disabled when form is empty", async ({
+    page,
+  }) => {
+    await page.getByRole("button", { name: /add definition/i }).click();
+
+    const createButton = page.getByRole("button", { name: /create/i });
+    await expect(createButton).toBeDisabled();
+  });
+
+  test("Create button should be enabled when required fields are filled", async ({
+    page,
+  }) => {
+    await page.getByRole("button", { name: /add definition/i }).click();
+
+    const createButton = page.getByRole("button", { name: /create/i });
+    await expect(createButton).toBeDisabled();
+
+    await page.getByRole("textbox", { name: /title/i }).fill(title);
+    await page.getByRole("textbox", { name: /slug/i }).fill(slug);
+    await page.getByRole("textbox", { name: /base price/i }).fill(basePrice);
+
+    await expect(createButton).toBeEnabled();
+  });
+
   test("validate required fields", async ({ page }) => {
     await page.getByRole("button", { name: /add definition/i }).click();
     await page

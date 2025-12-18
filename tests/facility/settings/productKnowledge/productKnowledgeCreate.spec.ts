@@ -59,6 +59,33 @@ test.describe("Product Knowledge Creation", () => {
     await page.getByRole("heading", { name: categoryName }).click();
   });
 
+  test("Create button should be disabled when form is empty", async ({
+    page,
+  }) => {
+    await page.getByRole("button", { name: /add product/i }).click();
+
+    const createButton = page.getByRole("button", { name: /create/i });
+    await expect(createButton).toBeDisabled();
+  });
+
+  test("Create button should be enabled when required fields are filled", async ({
+    page,
+  }) => {
+    await page.getByRole("button", { name: /add product/i }).click();
+
+    const createButton = page.getByRole("button", { name: /create/i });
+    await expect(createButton).toBeDisabled();
+
+    await page.getByRole("textbox", { name: /name/i }).fill(name);
+    await page.getByRole("textbox", { name: /slug/i }).fill(slug);
+    await page.getByRole("combobox", { name: /base unit/i }).click();
+    await page.getByRole("option", { name: baseUnit }).click();
+    await page.getByRole("combobox", { name: /dosage form/i }).click();
+    await page.getByRole("option").first().click();
+
+    await expect(createButton).toBeEnabled();
+  });
+
   test("validate the basic fields", async ({ page }) => {
     await page.getByRole("button", { name: /add product/i }).click();
     await page

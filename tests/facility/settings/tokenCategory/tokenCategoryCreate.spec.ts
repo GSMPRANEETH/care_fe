@@ -25,6 +25,40 @@ test.describe("Token Category Create - Permission Tests", () => {
     // Use admin authenticated state
     test.use({ storageState: "tests/.auth/user.json" });
 
+    test("Create button should be disabled when form is empty", async ({
+      page,
+    }) => {
+      await page.goto(`/facility/${facilityId}/settings/token_category/new`);
+
+      await expect(
+        page.getByRole("heading", { name: "Create Token Category" }),
+      ).toBeVisible({ timeout: 10000 });
+
+      const createButton = page.getByRole("button", { name: "Create" });
+      await expect(createButton).toBeDisabled();
+    });
+
+    test("Create button should be enabled when required fields are filled", async ({
+      page,
+    }) => {
+      await page.goto(`/facility/${facilityId}/settings/token_category/new`);
+
+      await expect(
+        page.getByRole("heading", { name: "Create Token Category" }),
+      ).toBeVisible({ timeout: 10000 });
+
+      const createButton = page.getByRole("button", { name: "Create" });
+      await expect(createButton).toBeDisabled();
+
+      // Fill required fields
+      await page.getByRole("textbox", { name: "Name" }).fill(tokenCategoryName);
+      await page.getByRole("combobox", { name: "Resource Type" }).click();
+      await page.getByRole("option", { name: resourceType }).click();
+      await page.getByRole("textbox", { name: "Shorthand" }).fill(shorthand);
+
+      await expect(createButton).toBeEnabled();
+    });
+
     test("Admin can view Add Token Category button", async ({ page }) => {
       // Navigate directly to token category page
       await page.goto(`/facility/${facilityId}/settings/token_category`);

@@ -43,6 +43,32 @@ test.describe("Specimen Definitions Create", () => {
     await page.goto(targetUrl);
   });
 
+  test("should keep Save disabled when form is empty", async ({ page }) => {
+    await page.getByRole("button", { name: /add definition/i }).click();
+
+    await expect(page.getByRole("button", { name: /save/i })).toBeDisabled();
+  });
+
+  test("should enable Save when required fields are filled", async ({
+    page,
+  }) => {
+    await page.getByRole("button", { name: /add definition/i }).click();
+
+    await page
+      .getByRole("textbox", { name: /title \*/i })
+      .fill(definitionTitle);
+    await page.getByRole("textbox", { name: /slug \*/i }).fill(definitionSlug);
+    await page
+      .getByRole("textbox", { name: /description \*/i })
+      .fill(definitionDescription);
+    await page.getByRole("combobox", { name: /status \*/i }).click();
+    await page.getByRole("option", { name: status }).click();
+    await page.getByRole("combobox", { name: /type collected \*/i }).click();
+    await page.getByRole("option", { name: typeCollected }).click();
+
+    await expect(page.getByRole("button", { name: /save/i })).toBeEnabled();
+  });
+
   test("should create specimen definition with all fields", async ({
     page,
   }) => {
