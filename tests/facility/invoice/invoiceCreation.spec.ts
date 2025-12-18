@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { getAccountId } from "tests/support/accountId";
 import { getFacilityId } from "tests/support/facilityId";
 
@@ -7,6 +7,21 @@ test.use({ storageState: "tests/.auth/user.json" });
 test.describe("Invoice Creation", () => {
   let facilityId: string;
   let accountId: string;
+
+  const createDraftInvoice = async (page: Page) => {
+    await expect(
+      page.getByRole("button", { name: /create invoice/i }),
+    ).toBeVisible({ timeout: 10000 });
+
+    await page.keyboard.press("i");
+    await page.keyboard.press("Shift+Enter");
+
+    await expect(
+      page
+        .locator("li[data-sonner-toast]")
+        .getByText(/invoice created successfully/i),
+    ).toBeVisible({ timeout: 10000 });
+  };
 
   test.beforeEach(async ({ page }) => {
     facilityId = getFacilityId();
@@ -17,20 +32,7 @@ test.describe("Invoice Creation", () => {
 
   test("should create a draft invoice", async ({ page }) => {
     await test.step("Attempt to issue invoice with no items", async () => {
-      await expect(
-        page.getByRole("button", { name: /create invoice/i }),
-      ).toBeVisible({ timeout: 10000 });
-
-      await page.keyboard.press("i");
-      await page.keyboard.press("Shift+Enter");
-    });
-
-    await test.step("Verify invoice created toast appears", async () => {
-      await expect(
-        page
-          .locator("li[data-sonner-toast]")
-          .getByText(/invoice created successfully/i),
-      ).toBeVisible({ timeout: 10000 });
+      await createDraftInvoice(page);
     });
 
     await test.step("Verify status is draft and 'issue invoice' button is disabled", async () => {
@@ -42,6 +44,7 @@ test.describe("Invoice Creation", () => {
   });
 
   test("should add charge items and issue invoice", async ({ page }) => {
+    await createDraftInvoice(page);
     await page.getByRole("link", { name: /see invoice/i }).click();
 
     await test.step("Add charge items to invoice", async () => {
