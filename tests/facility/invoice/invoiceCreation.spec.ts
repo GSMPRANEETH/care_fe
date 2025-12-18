@@ -1,59 +1,18 @@
-import { faker } from "@faker-js/faker";
 import { expect, test } from "@playwright/test";
+import { getAccountId } from "tests/support/accountId";
 import { getFacilityId } from "tests/support/facilityId";
 
 test.use({ storageState: "tests/.auth/user.json" });
 
 test.describe("Invoice Creation", () => {
-  let accId: string;
-  let accName: string;
   let facilityId: string;
-
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext({
-      storageState: "tests/.auth/user.json",
-    });
-    const page = await context.newPage();
-
-    facilityId = getFacilityId();
-    accName = faker.word.words(1);
-
-    await page.goto(`/facility/${facilityId}/encounters/patients/all`);
-
-    await page
-      .getByRole("link", { name: /patient home/i })
-      .first()
-      .click();
-
-    await page
-      .locator("[data-slot='patient-info-hover-card-trigger']")
-      .last()
-      .click();
-
-    await page.getByRole("link", { name: /view profile/i }).click();
-    await page.getByRole("tab", { name: /accounts/i }).click();
-    await page.getByRole("button", { name: /create account/i }).click();
-    await page.getByRole("textbox", { name: /name/i }).fill(accName);
-
-    await expect(page.getByRole("button", { name: /create/i })).toBeEnabled();
-
-    await page.getByRole("button", { name: /create/i }).click();
-
-    await expect(page.getByText(accName)).toBeVisible({ timeout: 10000 });
-
-    await page
-      .getByRole("button", { name: /go to account/i })
-      .first()
-      .click();
-
-    accId = page.url().split("/").pop() as string;
-
-    await page.close();
-    await context.close();
-  });
+  let accountId: string;
 
   test.beforeEach(async ({ page }) => {
-    await page.goto(`/facility/${facilityId}/billing/account/${accId}`);
+    facilityId = getFacilityId();
+    accountId = getAccountId();
+
+    await page.goto(`/facility/${facilityId}/billing/account/${accountId}`);
   });
 
   test("should create a draft invoice", async ({ page }) => {
@@ -86,19 +45,18 @@ test.describe("Invoice Creation", () => {
     await page.getByRole("link", { name: /see invoice/i }).click();
 
     await test.step("Add charge items to invoice", async () => {
-      await expect(
-        page.getByRole("button", { name: /add charge item/i }),
-      ).toBeVisible();
-
-      await page.keyboard.press("a");
+      await page.getByRole("button", { name: /add charge item/i }).click();
 
       await expect(
         page.getByRole("button", { name: /other charge items/i }),
       ).toBeVisible();
 
       await page.keyboard.press("o");
+
       await page.getByRole("combobox").click();
+      // Select charge item category
       await page.getByRole("option", { name: /tests/i }).first().click();
+      // Select specific charge item within category
       await page.getByRole("option", { name: /test/i }).first().click();
 
       await expect(
@@ -135,31 +93,5 @@ test.describe("Invoice Creation", () => {
 
       await expect(page.getByText(/invoice: issued/i)).toBeVisible();
     });
-  });
-
-  test.afterAll(async ({ browser }) => {
-    const context = await browser.newContext({
-      storageState: "tests/.auth/user.json",
-    });
-    const page = await context.newPage();
-
-    await page.goto(`/facility/${facilityId}/billing/account/${accId}`);
-
-    await expect(
-      page.getByRole("button", { name: /settle & close/i }),
-    ).toBeVisible({ timeout: 10000 });
-
-    await page.keyboard.press("s");
-
-    await page.getByRole("button", { name: /close account/i }).click();
-
-    await expect(
-      page
-        .locator("li[data-sonner-toast]")
-        .getByText(/account closed successfully/i),
-    ).toBeVisible({ timeout: 10000 });
-
-    await page.close();
-    await context.close();
   });
 });
