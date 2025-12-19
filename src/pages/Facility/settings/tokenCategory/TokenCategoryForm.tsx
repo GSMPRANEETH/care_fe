@@ -1,3 +1,4 @@
+import useAppHistory from "@/hooks/useAppHistory";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { navigate } from "raviger";
@@ -115,10 +116,7 @@ export function TokenCategoryFormContent({
   existingData,
   containerClassName,
   onSuccess = () => navigate(`/facility/${facilityId}/settings/token_category`),
-  onCancel = () =>
-    navigate(
-      `/facility/${facilityId}/settings/token_category${tokenCategoryId ? `/${tokenCategoryId}` : ""}`,
-    ),
+  onCancel,
   disableButtons = false,
   externalSubmitRef,
 }: {
@@ -132,6 +130,7 @@ export function TokenCategoryFormContent({
   externalSubmitRef?: React.RefObject<(() => void) | null>;
 }) {
   const { t } = useTranslation();
+  const { goBack } = useAppHistory();
   const queryClient = useQueryClient();
   const isEditMode = Boolean(tokenCategoryId);
 
@@ -299,7 +298,17 @@ export function TokenCategoryFormContent({
 
         {!disableButtons && (
           <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={onCancel}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={
+                onCancel ??
+                (() =>
+                  goBack(
+                    `/facility/${facilityId}/settings/token_category${tokenCategoryId ? `/${tokenCategoryId}` : ""}`,
+                  ))
+              }
+            >
               {t("cancel")}
             </Button>
             <Button type="submit" disabled={isPending}>

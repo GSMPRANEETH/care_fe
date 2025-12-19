@@ -1,3 +1,4 @@
+import useAppHistory from "@/hooks/useAppHistory";
 import { useQuery } from "@tanstack/react-query";
 import { navigate } from "raviger";
 import { useTranslation } from "react-i18next";
@@ -22,6 +23,7 @@ export function UpdateChargeItemDefinition({
   slug,
 }: UpdateChargeItemDefinitionProps) {
   const { t } = useTranslation();
+  const { goBack } = useAppHistory();
 
   const {
     data: chargeItemDefinition,
@@ -87,9 +89,7 @@ export function UpdateChargeItemDefinition({
   };
 
   const handleCancel = () => {
-    navigate(
-      `/facility/${facilityId}/settings/charge_item_definitions/${slug}`,
-    );
+    goBack(`/facility/${facilityId}/settings/charge_item_definitions`);
   };
 
   return (

@@ -1,3 +1,4 @@
+import useAppHistory from "@/hooks/useAppHistory";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Trash2Icon } from "lucide-react";
@@ -123,6 +124,7 @@ function ActivityDefinitionFormContent({
   categorySlug?: string;
 }) {
   const { t } = useTranslation();
+  const { goBack } = useAppHistory();
 
   const formSchema = z.object({
     title: z.string().min(1, t("field_required")),
@@ -1032,11 +1034,15 @@ function ActivityDefinitionFormContent({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() =>
-                  navigate(
-                    `/facility/${facilityId}/settings/activity_definitions`,
-                  )
-                }
+                onClick={() => {
+                  const fallback =
+                    isEditMode && activityDefinitionSlug
+                      ? `/facility/${facilityId}/settings/activity_definitions/${activityDefinitionSlug}`
+                      : categorySlug
+                        ? `/facility/${facilityId}/settings/activity_definitions/categories/${categorySlug}`
+                        : `/facility/${facilityId}/settings/activity_definitions`;
+                  goBack(fallback);
+                }}
               >
                 {t("cancel")}
               </Button>

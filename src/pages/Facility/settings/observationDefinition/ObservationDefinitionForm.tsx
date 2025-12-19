@@ -42,6 +42,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import useAppHistory from "@/hooks/useAppHistory";
 import { cn } from "@/lib/utils";
 import { CodeSchema } from "@/types/base/code/code";
 import { removeConditionType } from "@/types/base/condition/condition";
@@ -128,6 +129,7 @@ function ObservationDefinitionFormContent({
   onSuccess?: () => void;
 }) {
   const { t } = useTranslation();
+  const { goBack } = useAppHistory();
 
   const formSchema = z
     .object({
@@ -962,7 +964,7 @@ function ObservationDefinitionFormContent({
                 type="button"
                 variant="outline"
                 onClick={() =>
-                  navigate(
+                  goBack(
                     `/facility/${facilityId}/settings/observation_definitions${isEditMode ? `/${observationSlug}` : ""}`,
                   )
                 }

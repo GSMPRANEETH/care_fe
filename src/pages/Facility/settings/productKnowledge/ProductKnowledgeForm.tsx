@@ -1,7 +1,8 @@
+import useAppHistory from "@/hooks/useAppHistory";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CheckIcon, PlusCircle, X } from "lucide-react";
-import { Link, navigate } from "raviger";
+import { navigate } from "raviger";
 import React from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -182,6 +183,7 @@ function ProductKnowledgeFormContent({
   onSuccess?: () => void;
 }) {
   const { t } = useTranslation();
+  const { goBack } = useAppHistory();
 
   const queryClient = useQueryClient();
   const isEditMode = Boolean(slug);
@@ -1022,16 +1024,20 @@ function ProductKnowledgeFormContent({
             </div>
 
             <div className="mt-6 flex justify-end space-x-4">
-              <Button type="button" variant="outline" asChild>
-                <Link
-                  href={
-                    isEditMode
-                      ? `/product_knowledge/${slug}`
-                      : `/product_knowledge/categories/${categorySlug}`
-                  }
-                >
-                  {t("cancel")}
-                </Link>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  const fallback =
+                    isEditMode && slug
+                      ? `/facility/${facilityId}/settings/product_knowledge/${slug}`
+                      : categorySlug
+                        ? `/facility/${facilityId}/settings/product_knowledge/categories/${categorySlug}`
+                        : `/facility/${facilityId}/settings/product_knowledge`;
+                  goBack(fallback);
+                }}
+              >
+                {t("cancel")}
               </Button>
               <Button
                 type="submit"

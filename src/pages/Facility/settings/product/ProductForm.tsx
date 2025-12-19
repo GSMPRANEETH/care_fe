@@ -1,3 +1,4 @@
+import useAppHistory from "@/hooks/useAppHistory";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -148,10 +149,7 @@ export function ProductFormContent({
   slug,
   containerClassName,
   onSuccess = () => navigate(`/facility/${facilityId}/settings/product`),
-  onCancel = () =>
-    navigate(
-      `/facility/${facilityId}/settings/product${productId ? `/${productId}` : ""}`,
-    ),
+  onCancel,
   disableButtons = false,
   enabled = true,
   ref,
@@ -170,6 +168,7 @@ export function ProductFormContent({
   }>;
 }) {
   const { t } = useTranslation();
+  const { goBack } = useAppHistory();
   const queryClient = useQueryClient();
   const isEditMode = Boolean(productId);
   const [createCidOpen, setCreateCidOpen] = useState(false);
@@ -508,7 +507,17 @@ export function ProductFormContent({
 
         {!disableButtons && (
           <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={onCancel}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={
+                onCancel ??
+                (() =>
+                  goBack(
+                    `/facility/${facilityId}/settings/product${productId ? `/${productId}` : ""}`,
+                  ))
+              }
+            >
               {t("cancel")}
             </Button>
             <Button type="submit" disabled={isPending}>

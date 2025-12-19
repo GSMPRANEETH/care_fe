@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { t } from "i18next";
 import { PlusCircle, XCircle } from "lucide-react";
-import { navigate } from "raviger";
 import React from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -30,6 +29,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import useAppHistory from "@/hooks/useAppHistory";
 
 import ComboboxQuantityInput from "@/components/Common/ComboboxQuantityInput";
 import ValueSetSelect from "@/components/Questionnaire/ValueSetSelect";
@@ -222,6 +222,7 @@ export function SpecimenDefinitionForm({
   };
 
   const slug = initialData?.slug;
+  const { goBack } = useAppHistory();
 
   return (
     <Form {...form}>
@@ -747,7 +748,7 @@ export function SpecimenDefinitionForm({
             type="button"
             variant="outline"
             onClick={() =>
-              navigate(
+              goBack(
                 `/facility/${facilityId}/settings/specimen_definitions${slug ? `/${slug}` : ""}`,
               )
             }
