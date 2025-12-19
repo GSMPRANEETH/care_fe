@@ -11,7 +11,7 @@ test.describe("Invoice Creation", () => {
   const createDraftInvoice = async (page: Page) => {
     await expect(
       page.getByRole("button", { name: /create invoice/i }),
-    ).toBeVisible({ timeout: 10000 });
+    ).toBeVisible();
 
     await page.keyboard.press("i");
     await page.keyboard.press("Shift+Enter");
@@ -45,7 +45,6 @@ test.describe("Invoice Creation", () => {
 
   test("should add charge items and issue invoice", async ({ page }) => {
     await createDraftInvoice(page);
-    await page.getByRole("link", { name: /see invoice/i }).click();
 
     await test.step("Add charge items to invoice", async () => {
       await page.getByRole("button", { name: /add charge item/i }).click();
