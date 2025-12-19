@@ -40,18 +40,17 @@ import {
   ServiceRequestReadSpec,
   Status,
 } from "@/types/emr/serviceRequest/serviceRequest";
-import { LocationList } from "@/types/location/location";
+import { LocationRead } from "@/types/location/location";
 import locationApi from "@/types/location/locationApi";
 import { QuestionValidationError } from "@/types/questionnaire/batch";
 import { QuestionnaireResponse } from "@/types/questionnaire/form";
 import { CurrentUserRead, UserReadMinimal } from "@/types/user/user";
 
 // Extend the base type to use UserReadMinimal for requester
-interface ServiceRequestApplyActivityDefinitionSpec
-  extends Omit<
-    BaseServiceRequestApplyActivityDefinitionSpec,
-    "service_request"
-  > {
+interface ServiceRequestApplyActivityDefinitionSpec extends Omit<
+  BaseServiceRequestApplyActivityDefinitionSpec,
+  "service_request"
+> {
   service_request: Omit<
     BaseServiceRequestApplyActivityDefinitionSpec["service_request"],
     "requester"
@@ -489,10 +488,6 @@ export function ServiceRequestQuestion({
   });
 
   useEffect(() => {
-    console.log("selectedActivityDefinition", selectedActivityDefinition);
-  }, [selectedActivityDefinition]);
-
-  useEffect(() => {
     if (selectedActivityDefinition && selectedActivityDefinitionData) {
       const newServiceRequest: ServiceRequestApplyActivityDefinitionSpec = {
         service_request: {
@@ -568,7 +563,7 @@ export function ServiceRequestQuestion({
               ? updates.locations.map((loc) => {
                   if (typeof loc === "string") {
                     const location = locations?.results.find(
-                      (l: LocationList) => l.id === loc,
+                      (l: LocationRead) => l.id === loc,
                     );
 
                     return {
@@ -582,11 +577,11 @@ export function ServiceRequestQuestion({
                       mode: "instance",
                       availability_status: "available",
                       sort_index: location?.sort_index || 0,
-                    } as LocationList;
+                    } as LocationRead;
                   }
                   return loc;
                 })
-              : updates.locations) as LocationList[])
+              : updates.locations) as LocationRead[])
           : sr.service_request.locations || [];
 
         // Create updated service request with proper type handling
