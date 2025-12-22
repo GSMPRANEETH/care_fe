@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { expectToast } from "tests/helper/ui";
 import { getAccountId } from "tests/support/accountId";
 import { getFacilityId } from "tests/support/facilityId";
 
@@ -16,11 +17,7 @@ test.describe("Invoice Creation", () => {
     await page.keyboard.press("i");
     await page.keyboard.press("Shift+Enter");
 
-    await expect(
-      page
-        .locator("li[data-sonner-toast]")
-        .getByText(/invoice created successfully/i),
-    ).toBeVisible({ timeout: 10000 });
+    expectToast(page, /invoice created successfully/i);
   };
 
   test.beforeEach(async ({ page }) => {
@@ -47,7 +44,7 @@ test.describe("Invoice Creation", () => {
     await createDraftInvoice(page);
 
     await test.step("Add charge items to invoice", async () => {
-      await page.getByRole("button", { name: /add charge item/i }).click();
+      await page.getByRole("button", { name: /add charge item A/i }).click();
 
       await expect(
         page.getByRole("button", { name: /other charge items/i }),
@@ -67,11 +64,7 @@ test.describe("Invoice Creation", () => {
 
       await page.keyboard.press("Enter");
 
-      await expect(
-        page
-          .locator("li[data-sonner-toast]")
-          .getByText(/charge items added successfully/i),
-      ).toBeVisible({ timeout: 10000 });
+      expectToast(page, /charge items added successfully/i);
 
       await expect(
         page.getByRole("button", { name: /add selected items/i }),
@@ -87,12 +80,7 @@ test.describe("Invoice Creation", () => {
 
       await page.keyboard.press("i");
 
-      await expect(
-        page
-          .locator("li[data-sonner-toast]")
-          .getByText(/invoice updated successfully/i),
-      ).toBeVisible({ timeout: 10000 });
-
+      expectToast(page, /invoice updated successfully/i);
       await expect(page.getByText(/invoice: issued/i)).toBeVisible();
     });
   });
