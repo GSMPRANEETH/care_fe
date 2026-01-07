@@ -36,7 +36,7 @@ test.describe("Invoice Creation", () => {
     await page.keyboard.press("i");
     await page.keyboard.press("Shift+Enter");
 
-    expectToast(page, /invoice created successfully/i);
+    await expectToast(page, /invoice created successfully/i);
   };
 
   test.beforeEach(async ({ page }) => {
@@ -83,7 +83,7 @@ test.describe("Invoice Creation", () => {
         page.getByRole("button", { name: /add items/i }),
       ).toBeEnabled();
       await page.keyboard.press("Enter");
-      expectToast(page, /charge items added successfully/i);
+      await expectToast(page, /charge items added successfully/i);
 
       await expect(
         page.getByRole("button", { name: /add selected items/i }),
@@ -97,7 +97,7 @@ test.describe("Invoice Creation", () => {
       ).toBeEnabled();
       await page.keyboard.press("i");
 
-      expectToast(page, /invoice updated successfully/i);
+      await expectToast(page, /invoice updated successfully/i);
       await expect(page.getByText(/invoice: issued/i)).toBeVisible();
     });
   });
