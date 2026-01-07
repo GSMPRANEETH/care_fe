@@ -178,15 +178,13 @@ export function TokenCategoryFormContent({
         id: tokenCategoryId || "",
       },
     }),
-    onSuccess: () => {
+    onSuccess: (tokenCategory: TokenCategoryRead) => {
       queryClient.invalidateQueries({ queryKey: ["tokenCategories"] });
       queryClient.invalidateQueries({
         queryKey: ["tokenCategory", tokenCategoryId],
       });
       toast.success(t("token_category_updated_successfully"));
-      navigate(
-        `/facility/${facilityId}/settings/token_category/${tokenCategoryId}`,
-      );
+      onSuccess?.(tokenCategory);
     },
   });
 

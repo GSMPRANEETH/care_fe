@@ -242,13 +242,12 @@ export function ProductFormContent({
       },
     }),
     onSuccess: (product: ProductRead) => {
-      onSuccess?.(product);
       queryClient.invalidateQueries({ queryKey: ["products"] });
       queryClient.invalidateQueries({
         queryKey: ["product", productId],
       });
       toast.success(t("product_updated_successfully"));
-      navigate(`/facility/${facilityId}/settings/product/${productId}`);
+      onSuccess?.(product);
     },
   });
   useImperativeHandle(ref, () => ({
