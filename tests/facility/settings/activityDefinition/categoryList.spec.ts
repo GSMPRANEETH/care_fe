@@ -41,6 +41,8 @@ test.describe("Activity Definition Resource Category List", () => {
       page.getByRole("heading", { name: /create category/i }),
     ).toBeVisible();
 
+    await page.getByRole("textbox", { name: /description/i }).fill(" ");
+
     await page.getByRole("button", { name: /create category/i }).click();
 
     await expect(

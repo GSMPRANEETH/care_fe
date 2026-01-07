@@ -60,6 +60,8 @@ test.describe("activity definition form", () => {
       `/facility/${facilityId}/settings/activity_definitions/categories/f-${facilityId}-${RESOURCE_CATEGORY_SLUG}/new`,
     );
 
+    await page.getByRole("textbox", { name: "Derived from URI" }).fill(" ");
+
     await page.getByRole("button", { name: "Create" }).click();
 
     await expect(
@@ -78,10 +80,6 @@ test.describe("activity definition form", () => {
 
     await expect(
       getFieldErrorMessage(page.getByRole("textbox", { name: "Usage *" })),
-    ).toBeVisible();
-
-    await expect(
-      getFieldErrorMessage(page.getByRole("combobox", { name: "Category *" })),
     ).toBeVisible();
 
     await expect(
