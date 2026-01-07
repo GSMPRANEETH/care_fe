@@ -69,10 +69,12 @@ export default function ObservationDefinitionForm({
   facilityId,
   observationSlug,
   onSuccess,
+  onCancel,
 }: {
   facilityId: string;
   observationSlug?: string;
   onSuccess?: () => void;
+  onCancel?: () => void;
 }) {
   const { t } = useTranslation();
 
@@ -112,6 +114,7 @@ export default function ObservationDefinitionForm({
       observationSlug={observationSlug}
       existingData={existingData}
       onSuccess={onSuccess}
+      onCancel={onCancel}
     />
   );
 }
@@ -122,11 +125,13 @@ function ObservationDefinitionFormContent({
   existingData,
   onSuccess = () =>
     navigate(`/facility/${facilityId}/settings/observation_definitions`),
+  onCancel,
 }: {
   facilityId: string;
   observationSlug?: string;
   existingData?: ObservationDefinitionReadSpec;
   onSuccess?: () => void;
+  onCancel?: () => void;
 }) {
   const { t } = useTranslation();
   const { goBack } = useAppHistory();
@@ -964,9 +969,11 @@ function ObservationDefinitionFormContent({
                 type="button"
                 variant="outline"
                 onClick={() =>
-                  goBack(
-                    `/facility/${facilityId}/settings/observation_definitions${isEditMode ? `/${observationSlug}` : ""}`,
-                  )
+                  onCancel
+                    ? onCancel()
+                    : goBack(
+                        `/facility/${facilityId}/settings/observation_definitions${isEditMode ? `/${observationSlug}` : ""}`,
+                      )
                 }
               >
                 {t("cancel")}

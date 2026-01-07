@@ -89,7 +89,7 @@ export function UpdateChargeItemDefinition({
   };
 
   const handleCancel = () => {
-    goBack(`/facility/${facilityId}/settings/charge_item_definitions`);
+    goBack(`/facility/${facilityId}/settings/charge_item_definitions/${slug}`);
   };
 
   return (

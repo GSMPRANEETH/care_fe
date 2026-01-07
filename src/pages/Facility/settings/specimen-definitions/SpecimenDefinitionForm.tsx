@@ -94,12 +94,14 @@ interface SpecimenDefinitionFormProps {
   initialData?: SpecimenDefinitionRead;
   onSubmit: (data: SpecimenDefinitionCreate) => void;
   isLoading?: boolean;
+  onCancel?: () => void;
 }
 
 export function SpecimenDefinitionForm({
   initialData,
   onSubmit,
   isLoading,
+  onCancel,
 }: SpecimenDefinitionFormProps) {
   const { t } = useTranslation();
 
@@ -748,9 +750,11 @@ export function SpecimenDefinitionForm({
             type="button"
             variant="outline"
             onClick={() =>
-              goBack(
-                `/facility/${facilityId}/settings/specimen_definitions${slug ? `/${slug}` : ""}`,
-              )
+              onCancel
+                ? onCancel()
+                : goBack(
+                    `/facility/${facilityId}/settings/specimen_definitions${slug ? `/${slug}` : ""}`,
+                  )
             }
           >
             {t("cancel")}

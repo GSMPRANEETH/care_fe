@@ -789,10 +789,11 @@ function ActivityDefinitionFormContent({
                         placeholder={t("select_specimen_requirements")}
                         onSearch={setSpecimenSearch}
                         canCreate={true}
-                        createForm={(onSuccess) => (
+                        createForm={(onSuccess, onCancel) => (
                           <CreateSpecimenDefinition
                             facilityId={facilityId}
                             onSuccess={onSuccess}
+                            onCancel={onCancel}
                           />
                         )}
                       />
@@ -851,11 +852,12 @@ function ActivityDefinitionFormContent({
                         placeholder={t("select_observation_requirements")}
                         onSearch={setObservationSearch}
                         canCreate={true}
-                        createForm={(onSuccess) => (
+                        createForm={(onSuccess, onCancel) => (
                           <div className="py-2">
                             <ObservationDefinitionForm
                               facilityId={facilityId}
                               onSuccess={onSuccess}
+                              onCancel={onCancel}
                             />
                           </div>
                         )}
