@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { navigate } from "raviger";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -32,6 +31,7 @@ import LocationMultiSelect from "@/components/Location/LocationMultiSelect";
 
 import FacilityOrganizationSelector from "@/pages/Facility/settings/organizations/components/FacilityOrganizationSelector";
 
+import useAppHistory from "@/hooks/useAppHistory";
 // import ValueSetSelect from "@/components/Questionnaire/ValueSetSelect";
 
 import mutate from "@/Utils/request/mutate";
@@ -131,6 +131,7 @@ function HealthcareServiceFormContent({
 }) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const appHistory = useAppHistory();
   const isEditMode = Boolean(healthcareServiceId);
 
   const form = useForm<FormValues>({
@@ -173,7 +174,9 @@ function HealthcareServiceFormContent({
           queryKey: ["healthcareService", healthcareServiceId],
         });
         toast.success(t("healthcare_service_created_successfully"));
-        navigate(`/facility/${facilityId}/settings/healthcare_services`);
+        appHistory.goBack(
+          `/facility/${facilityId}/settings/healthcare_services`,
+        );
       },
     });
 
@@ -188,7 +191,7 @@ function HealthcareServiceFormContent({
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["healthcareServices"] });
         toast.success(t("healthcare_service_updated_successfully"));
-        navigate(
+        appHistory.goBack(
           `/facility/${facilityId}/settings/healthcare_services/${healthcareServiceId}`,
         );
       },
@@ -466,7 +469,7 @@ function HealthcareServiceFormContent({
               <Button
                 variant="outline"
                 onClick={() =>
-                  navigate(
+                  appHistory.goBack(
                     `/facility/${facilityId}/settings/healthcare_services${isEditMode ? `/${healthcareServiceId}` : ""}`,
                   )
                 }

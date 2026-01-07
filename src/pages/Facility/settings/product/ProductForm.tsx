@@ -241,7 +241,8 @@ export function ProductFormContent({
         productId: productId || "",
       },
     }),
-    onSuccess: () => {
+    onSuccess: (product: ProductRead) => {
+      onSuccess?.(product);
       queryClient.invalidateQueries({ queryKey: ["products"] });
       queryClient.invalidateQueries({
         queryKey: ["product", productId],
