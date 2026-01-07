@@ -181,6 +181,12 @@ test.describe("activity definition form", () => {
     ).toBeVisible();
 
     await expect(
+      getCardByTitle(page, "Healthcare Service").getByText(
+        createdData.healthcareService!,
+      ),
+    ).toBeVisible();
+
+    await expect(
       getCardByTitle(page, "Locations").getByText(createdData.location!),
     ).toBeVisible();
 
